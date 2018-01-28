@@ -1,0 +1,123 @@
+﻿
+@using Newtonsoft.Json
+@{
+    ViewBag.Title = "Главная";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div id="indexPage">
+
+    <div>
+        <md-card>
+            <md-card-media-cover md-solid>
+                <md-card-media md-ratio="4:3">
+                    <img src="~/Content/Images/dokumentooborot-02.png" alt="Skyscraper">
+                </md-card-media>
+
+                <md-card-area>
+                    <md-card-header>
+                        <span class="md-title">Подсистема документооборота</span>
+                        <span class="md-subhead">производственного предприятия</span>
+                    </md-card-header>
+                </md-card-area>
+            </md-card-media-cover>
+        </md-card>
+        
+        <md-card>
+            <md-card-media>
+                <img src="~/Content/Images/bg1.png" alt="Skyscraper">
+            </md-card-media>
+
+            <md-card-header>
+                <div class="md-title">Электронный документооборот</div>
+            </md-card-header>
+
+            <md-card-content>
+                Cовокупность автоматизированных процессов по работе с документами, 
+                представленными в электронном виде, с реализацией концепции «безбумажного делопроизводства»
+            </md-card-content>
+        </md-card>
+
+        <md-card>
+            <md-card-media>
+                <img src="~/Content/Images/main_pic.png" alt="Skyscraper">
+            </md-card-media>
+
+            <md-card-header>
+                <div class="md-title">Виды электронного документооборота</div>
+            </md-card-header>
+
+            <md-card-content>
+                <ol>
+                    <li>производственный документооборот; </li>
+                    <li>управленческий документооборот; </li>
+                    <li>архивное дело (совокупность процедур архивного документооборота); </li>
+                    <li>кадровый документооборот (процедуры кадрового учета); </li>
+                    <li>бухгалтерский документооборот; </li>
+                    <li>складской документооборот; </li>
+                    <li>секретное и конфиденциальное делопроизводство; </li>
+                    <li>технический и технологический документооборот. </li>
+                </ol>
+            </md-card-content>            
+        </md-card>
+    </div>
+
+</div>
+<style lang="scss" scoped>
+    .md-card {
+        width: 320px;
+        margin: 4px;
+        display: inline-block;
+        vertical-align: top;
+    }
+
+    .md-card-example {
+        .md-subhead
+
+    {
+        .md-icon
+
+    {
+        $size: 16px;
+        width: $size;
+        min-width: $size;
+        height: $size;
+        font-size: $size !important;
+    }
+
+    span {
+        vertical-align: middle;
+    }
+
+    }
+
+    .card-reservation {
+        margin-top: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        .md-icon
+
+    {
+        margin: 8px;
+    }
+
+    }
+
+    .md-button-group {
+        display: flex;
+        .md-button
+
+    {
+        min-width: 60px;
+        border-radius: 2px;
+    }
+
+    }
+    }
+</style>
+@section scripts{
+    <script>
+        var model = @Html.Raw(JsonConvert.SerializeObject(Model));
+    </script>
+    <script src="~/Scripts/Default/Index.js" defer></script>
+}

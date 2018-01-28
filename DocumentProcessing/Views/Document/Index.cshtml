@@ -1,0 +1,106 @@
+﻿@using Newtonsoft.Json
+@{
+    ViewBag.Title = "Документ";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div id="documentPage">
+    <div v-if="editing" class="container">
+        <form id="documentForm" novalidate class="md-layout-row md-gutter" @@submit.prevent="validateDocument">
+            @Html.AntiForgeryToken()
+            <md-card class="md-flex-50 md-flex-small-100">
+                <md-card-header>
+                    <div class="md-title">Создание документа</div>
+                </md-card-header>
+
+                <md-card-content>
+                    <div class="md-layout-row md-layout-wrap md-gutter">
+                        <div class="md-flex md-flex-small-100">
+                            <md-field :class="getValidationClass('Name')">
+                                <label for="name">Название</label>
+                                <md-input name="name" id="name" autocomplete="document-name" v-model="form.Name" :disabled="sending" />
+                                <span class="md-error" v-if="!$v.form.Name.required">The first name is required</span>
+                                <span class="md-error" v-else-if"!$v.form.Name.minlength">Неверное имя</span>
+                            </md-field>
+                        </div>
+
+                        <div class="md-flex md-flex-small-100">
+                            <md-field :class="getValidationClass('Type')">
+                                <label for="typeId">Тип документа</label>
+                                <md-select name="typeId" id="typeId" v-model="form.Type" md-dense :disabled="sending">
+                                    <md-option v-for="type in form.AllTypes" :value="type.Id">{{type.Name}}</md-option>
+                                </md-select>
+                                <span class="md-error" v-if="!$v.form.Type.required">Нужно выбрать тип документа</span>
+                            </md-field>
+                        </div>
+
+                        <div class="md-flex md-flex-small-100">
+                            <md-field :class="getValidationClass('CurrentResponsibleId')">
+                                <label for="currentResponsibleId">Кому отправить</label>
+                                <md-select name="currentResponsibleId" id="currentResponsibleId" v-model="form.CurrentResponsibleId" md-dense :disabled="sending">
+                                    <md-option v-for="user in form.PossibleUsersToAssign" :value="user.Id">{{user.Firstname}} {{user.Lastname}}</md-option>
+                                </md-select>
+                                <span class="md-error" v-if="!$v.form.CurrentResponsibleId.required">Нужно выбрать кому отправить документ.</span>
+                            </md-field>
+                        </div>
+
+                        <div class="md-flex md-flex-small-100">
+                            <md-field :class="getValidationClass('DocumentFile')">
+                                <label>Документ</label>
+                                <md-file name="DocumentFile" id="DocumentFile" v-model="form.DocumentFile" md-dense :disabled="sending" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx" />
+                                <span class="md-error" v-if="!$v.form.DocumentFile.required">Нужно выбрать файл.</span>
+                            </md-field>
+                        </div>
+                    </div>
+
+                    <md-button type="submit" class="md-primary" :disabled="sending">Добавить документ</md-button>
+                </md-card-content>
+
+                <md-progress-bar md-mode="indeterminate" v-if="sending" />
+            </md-card>
+            <md-snackbar md-active.sync="editing">Документ "{{ form.Name }}" успешно добавлен!</md-snackbar>
+        </form>
+    </div>
+    <div v-else>
+        <md-card>
+            <md-card-header>
+                <div class="md-title">{{form.Name}}</div>
+            </md-card-header>
+
+            <md-card-content>
+                <md-list class="md-triple-line">
+                    <md-list-item>
+                        <div class="md-list-item-text">
+                            <span>{{form.TypeModel.Name}}</span>
+                            <span>Создатель: {{form.Creator.Firstname}} {{form.Creator.Lastname}}</span>
+                            <span>Ответственный: {{form.Responsible.Firstname}} {{form.Responsible.Lastname}}</span>
+                            <span>Создан: {{form.Created}}</span>
+                        </div>
+                    </md-list-item>
+                </md-list>
+            </md-card-content>
+
+            <md-card-actions>
+                <md-button @@click="editing = !editing"><a>Редактировать</a></md-button>
+                <md-button>
+                    <a :href="'/Document/DownloadDocument?id=' + form.Id" target="_blank" class="button3">Скачать</a>
+                </md-button>
+            </md-card-actions>
+        </md-card>
+    </div>
+</div>
+<style lang="scss" scoped>
+    .md-card {
+        width: auto;
+        margin: 20px;
+        display: contents;
+        vertical-align: central;
+    }
+</style>
+
+@section scripts{
+    <script>
+        var model = @Html.Raw(JsonConvert.SerializeObject(Model));
+    </script>
+    <script src="~/Scripts/Document/Index.js" defer></script>
+}

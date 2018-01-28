@@ -1,0 +1,113 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <meta content="width=device-width,initial-scale=1,minimal-ui" name="viewport">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic|Material+Icons">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/vue-material@beta/dist/vue-material.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/vue-material@beta/dist/theme/default.css">
+    <title>@ViewBag.Title - Подсистема документообеспечения</title>
+    @*@Styles.Render("~/Content/css")
+        @Scripts.Render("~/bundles/modernizr")*@
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:400,500,700,400italic|Material+Icons">
+</head>
+<body>
+    <div id="app">
+        <div class="page-container md-layout-column">
+            <md-toolbar>
+                <md-button class="md-icon-button" @@click="showNavigation = true">
+                    <md-icon>menu</md-icon>
+                </md-button>
+                <span class="md-title">Электронный документооборот</span>
+                <div class="md-toolbar-section-end">
+                    @Html.Partial("_LoginPartial")
+                </div>
+            </md-toolbar>
+
+            <md-drawer :md-active.sync="showNavigation">
+                <md-toolbar class="md-transparent" md-elevation="0">
+                    <span class="md-title">Меню</span>
+                </md-toolbar>
+
+                <md-list>
+                    <md-list-item>
+                        <md-icon>home</md-icon>
+                        <span class="md-list-item-text">@Html.ActionLink("Главная", "Index", "Default", routeValues: null, htmlAttributes: new { title = "Главная" })</span>
+
+                    </md-list-item>
+
+                    <md-list-item>
+                        <md-icon>work</md-icon>
+                        <span class="md-list-item-text">@Html.ActionLink("Мои документы", "Index", "Document", routeValues: null, htmlAttributes: new { title = "Документы" })</span>
+
+                    </md-list-item>
+
+                    <md-list-item>
+                        <md-icon>note_add</md-icon>
+                        <span class="md-list-item-text">@Html.ActionLink("Новый документ", "Index", "Document", routeValues: null, htmlAttributes: new { title = "Новый документ" })</span>
+
+                    </md-list-item>
+                </md-list>
+            </md-drawer>
+        </div>
+    </div>
+    <style lang="scss" scoped>
+        .md-card {
+            width: auto;
+            margin: 20px;
+            display: contents;
+            vertical-align: central;
+        }
+        @@font-face {
+          font-family: 'Material Icons';
+          font-style: normal;
+          font-weight: 400;
+          src: url(https://example.com/MaterialIcons-Regular.eot); /* For IE6-8 */
+          src: local('Material Icons'),
+            local('MaterialIcons-Regular'),
+            url(https://example.com/MaterialIcons-Regular.woff2) format('woff2'),
+            url(https://example.com/MaterialIcons-Regular.woff) format('woff'),
+            url(https://example.com/MaterialIcons-Regular.ttf) format('truetype');
+        }
+        .material-icons {
+            font-family: 'Material Icons';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px; /* Preferred icon size */
+            display: inline-block;
+            line-height: 1;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+            white-space: nowrap;
+            direction: ltr;
+            /* Support for all WebKit browsers. */
+            -webkit-font-smoothing: antialiased;
+            /* Support for Safari and Chrome. */
+            text-rendering: optimizeLegibility;
+            /* Support for Firefox. */
+            /* Support for IE. */
+            font-feature-settings: 'liga';
+        }
+    </style>
+
+    @RenderBody()
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    <script src="https://unpkg.com/vue"></script>
+    <script src="https://unpkg.com/vue-material@beta"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue-resource@1.3.5"></script>
+    <script src='https://unpkg.com/vuelidate@0.5.0/dist/vuelidate.min.js'></script>
+    <script src='https://unpkg.com/vuelidate@0.5.0/dist/validators.min.js'></script>
+    <script src='https://unpkg.com/vuelidate-error-extractor/dist/vuelidate-error-extractor.js'></script>
+    <script src="~/Scripts/Layout.js" defer></script>
+    @RenderSection("scripts", required: false)
+
+
+
+</body>
+</html>

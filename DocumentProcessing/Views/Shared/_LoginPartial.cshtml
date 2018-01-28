@@ -1,0 +1,43 @@
+﻿@using Microsoft.AspNet.Identity
+@if (Request.IsAuthenticated)
+{
+    using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+    {
+        @Html.AntiForgeryToken()
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+        <md-button>
+            <a href="">
+                <i class="fa fa-user-circle" aria-hidden="true"></i>
+                <span class="sr-only"> </span>
+                @Html.ActionLink("Здравствуйте, " + User.Identity.GetUserName() + "!", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Профиль" })
+            </a>
+            
+        </md-button>
+        <md-button>
+            <a href="javascript:document.getElementById('logoutForm').submit()">
+                <i class="fa fa-sign-out" aria-hidden="true"></i>
+                <span class="sr-only"> </span>Выйти
+            </a>
+            @*<md-icon class="fa fa-cancel" aria-hidden="true"></md-icon>
+            <a href="javascript:document.getElementById('logoutForm').submit()">*@
+        </md-button>
+    }
+}
+else
+{
+    <md-button>
+        <a href="">
+            <i class="fa fa-user-plus" aria-hidden="true"></i>
+            <span class="sr-only"> </span>
+            @Html.ActionLink("Зарегистрироваться", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })
+        </a>            
+</md-button>
+    <md-button>
+        <a href="">
+            <i class="fa fa-sign-in" aria-hidden="true"></i>
+            <span class="sr-only"> </span>
+            @Html.ActionLink("Войти", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })
+        </a>        
+    </md-button>
+}
