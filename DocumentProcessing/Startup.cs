@@ -1,4 +1,5 @@
-﻿using Microsoft.Owin;
+﻿using DocumentProcessing.Models;
+using Microsoft.Owin;
 using Owin;
 
 [assembly: OwinStartupAttribute(typeof(DocumentProcessing.Startup))]

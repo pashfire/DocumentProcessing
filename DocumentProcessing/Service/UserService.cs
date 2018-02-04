@@ -3,6 +3,7 @@ using DocumentProcessing.Infrastructure.Enums;
 using DocumentProcessing.Models;
 using DocumentProcessing.Models.User;
 using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,18 +14,20 @@ namespace DocumentProcessing.Service
 {
     public class UserService
     {
-        private GenericRepository<User> userRepo;
+        private RoleManager<IdentityRole> _roleManager;
+        private GenericRepository<User> _userRepo;
 
         public UserService(DocumentProcessingEntities dataContext)
         {
-            userRepo = new GenericRepository<User>(dataContext);
+            _userRepo = new GenericRepository<User>(dataContext);
+            _roleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(dataContext));
         }
 
         public User GetUser(int id)
-            => userRepo.GetById(id);
+            => _userRepo.GetById(id);
 
         public User GetUserByEmail(string email)
-            => userRepo.Get(a => a.AspNetUser.Email.Equals(email))
+            => _userRepo.Get(a => a.AspNetUser.Email.Equals(email))
                     ?.FirstOrDefault();
 
         public async Task<(IdentityResult, ApplicationUser)> RegisterUserAsync(RegisterModel model, ApplicationUserManager userManager)
@@ -44,10 +47,11 @@ namespace DocumentProcessing.Service
                     {
                         AspnetUserId = appUser.Id,
                         Lastname = model.Lastname,
-                        Firstname = model.Firstname
+                        Firstname = model.Firstname,
+                        Role = roleName
                     };
 
-                    userRepo.Insert(ref user);
+                    _userRepo.Insert(ref user);
                 }
                 else
                 {

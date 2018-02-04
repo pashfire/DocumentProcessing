@@ -13,22 +13,27 @@ namespace DocumentProcessing.Models.User
         public string Email { get; set; }
         public string Firstname { get; set; }
         public string Lastname { get; set; }
+        
 
         public int UserRole { get; set; }
         public string RoleName { get; set; }
 
         internal static UserModel Map(DAL.User user)
         {
-            return new UserModel()
+            if (user != null)
             {
-                Id = user.Id,
-                Email = user.AspNetUser.Email,
-                Firstname = user.Firstname,
-                Lastname = user.Lastname,
-                RoleName = user.AspNetUser.AspNetRoles.First().Name,
-                UserRole = (int)Enum.Parse(typeof(UserRoles),
-                    user.AspNetUser.AspNetRoles.First().Name)
-            };
+                return new UserModel()
+                {
+                    Id = user.Id,
+                    Email = user.AspNetUser.Email,
+                    Firstname = user.Firstname,
+                    Lastname = user.Lastname,
+                    RoleName = user.Role,
+                    UserRole = (int)Enum.Parse(typeof(UserRoles),
+                user.AspNetUser.AspNetRoles.First().Name)
+                };
+            }
+            else return null;
         }
     }
 }

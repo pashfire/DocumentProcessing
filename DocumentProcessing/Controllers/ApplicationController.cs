@@ -18,9 +18,7 @@ namespace DocumentProcessing.Controllers
         {
             get
             {
-                return dataContext == null
-                    ? (dataContext = new DocumentProcessingEntities())
-                    : dataContext;
+                return dataContext ?? (dataContext = new DocumentProcessingEntities());
             }
         }
 

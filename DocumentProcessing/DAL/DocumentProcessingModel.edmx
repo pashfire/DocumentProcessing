@@ -5,6 +5,15 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="DocumentProcessingModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="AffairsNomenclature">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IndexOfCase" Type="nvarchar" MaxLength="15" Nullable="false" />
+          <Property Name="SectionName" Type="nvarchar" MaxLength="256" Nullable="false" />
+          <Property Name="Headline" Type="nvarchar" MaxLength="256" Nullable="false" />
+        </EntityType>
         <EntityType Name="AspNetRoles">
           <Key>
             <PropertyRef Name="Id" />
@@ -64,11 +73,11 @@
           <Property Name="Name" Type="nvarchar" MaxLength="256" Nullable="false" />
           <Property Name="Path" Type="nvarchar" MaxLength="256" Nullable="false" />
           <Property Name="CreatorId" Type="int" Nullable="false" />
-          <Property Name="CreationDate" Type="date" Nullable="false" />
+          <Property Name="CreationDate" Type="nvarchar" MaxLength="128" Nullable="false" />
           <Property Name="TypeId" Type="int" Nullable="false" />
           <Property Name="DocIndex" Type="nvarchar" MaxLength="256" />
-          <Property Name="ExecutionPeriod" Type="date" Nullable="false" />
-          <Property Name="RegistrationDate" Type="date" Nullable="false" />
+          <Property Name="ExecutionPeriod" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="RegistrationDate" Type="nvarchar" MaxLength="128" Nullable="false" />
           <Property Name="DocHeader" Type="nvarchar" MaxLength="256" />
           <Property Name="ManagerId" Type="int" />
           <Property Name="Resolution" Type="nvarchar" MaxLength="256" />
@@ -76,6 +85,7 @@
           <Property Name="ExecutorNote" Type="nvarchar" MaxLength="256" />
           <Property Name="ControllerId" Type="int" />
           <Property Name="ControllerNote" Type="nvarchar" MaxLength="256" />
+          <Property Name="NomenclatureId" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="DocumentTypes">
           <Key>
@@ -84,6 +94,15 @@
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="40" Nullable="false" />
           <Property Name="Description" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="UserRoles">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="AspNetUsersId" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="AspNetRolesId" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="Role" Type="nvarchar" MaxLength="256" Nullable="false" />
         </EntityType>
         <EntityType Name="Users">
           <Key>
@@ -94,6 +113,7 @@
           <Property Name="Firstname" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="Lastname" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="Photo" Type="nvarchar" MaxLength="120" />
+          <Property Name="Role" Type="nvarchar" MaxLength="120" Nullable="false" />
         </EntityType>
         <Association Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
           <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1">
@@ -148,6 +168,18 @@
             </Principal>
             <Dependent Role="AspNetUserRoles">
               <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Documents_AffairsNomenclature">
+          <End Role="AffairsNomenclature" Type="Self.AffairsNomenclature" Multiplicity="1" />
+          <End Role="Documents" Type="Self.Documents" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AffairsNomenclature">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Documents">
+              <PropertyRef Name="NomenclatureId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -211,6 +243,32 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_UserRoles_AspNetRoles">
+          <End Role="AspNetRoles" Type="Self.AspNetRoles" Multiplicity="1" />
+          <End Role="UserRoles" Type="Self.UserRoles" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetRoles">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="UserRoles">
+              <PropertyRef Name="AspNetRolesId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UserRoles_AspNetUsers">
+          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="UserRoles" Type="Self.UserRoles" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUsers">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="UserRoles">
+              <PropertyRef Name="AspNetUsersId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Users_ToAspNetUsers">
           <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1">
             <OnDelete Action="Cascade" />
@@ -226,6 +284,7 @@
           </ReferentialConstraint>
         </Association>
         <EntityContainer Name="DocumentProcessingModelStoreContainer">
+          <EntitySet Name="AffairsNomenclature" EntityType="Self.AffairsNomenclature" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AspNetRoles" EntityType="Self.AspNetRoles" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AspNetUserClaims" EntityType="Self.AspNetUserClaims" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AspNetUserLogins" EntityType="Self.AspNetUserLogins" Schema="dbo" store:Type="Tables" />
@@ -233,6 +292,7 @@
           <EntitySet Name="AspNetUsers" EntityType="Self.AspNetUsers" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Documents" EntityType="Self.Documents" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="DocumentTypes" EntityType="Self.DocumentTypes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="UserRoles" EntityType="Self.UserRoles" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Users" EntityType="Self.Users" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" Association="Self.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
@@ -249,6 +309,10 @@
           <AssociationSet Name="FK_dbo_AspNetUserRoles_dbo_AspNetUsers_UserId" Association="Self.FK_dbo_AspNetUserRoles_dbo_AspNetUsers_UserId">
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="AspNetUserRoles" EntitySet="AspNetUserRoles" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Documents_AffairsNomenclature" Association="Self.FK_Documents_AffairsNomenclature">
+            <End Role="AffairsNomenclature" EntitySet="AffairsNomenclature" />
+            <End Role="Documents" EntitySet="Documents" />
           </AssociationSet>
           <AssociationSet Name="FK_Documents_ToControoller" Association="Self.FK_Documents_ToControoller">
             <End Role="Users" EntitySet="Users" />
@@ -270,6 +334,14 @@
             <End Role="Users" EntitySet="Users" />
             <End Role="Documents" EntitySet="Documents" />
           </AssociationSet>
+          <AssociationSet Name="FK_UserRoles_AspNetRoles" Association="Self.FK_UserRoles_AspNetRoles">
+            <End Role="AspNetRoles" EntitySet="AspNetRoles" />
+            <End Role="UserRoles" EntitySet="UserRoles" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserRoles_AspNetUsers" Association="Self.FK_UserRoles_AspNetUsers">
+            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+            <End Role="UserRoles" EntitySet="UserRoles" />
+          </AssociationSet>
           <AssociationSet Name="FK_Users_ToAspNetUsers" Association="Self.FK_Users_ToAspNetUsers">
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="Users" EntitySet="Users" />
@@ -286,6 +358,7 @@
           <Property Name="Id" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="Name" Type="String" MaxLength="256" FixedLength="false" Unicode="true" Nullable="false" />
           <NavigationProperty Name="AspNetUsers" Relationship="Self.AspNetUserRoles" FromRole="AspNetRoles" ToRole="AspNetUsers" />
+          <NavigationProperty Name="UserRoles" Relationship="DocumentProcessingModel.FK_UserRoles_AspNetRoles" FromRole="AspNetRole" ToRole="UserRole" />
         </EntityType>
         <EntityType Name="AspNetUserClaim">
           <Key>
@@ -328,6 +401,7 @@
           <NavigationProperty Name="AspNetUserLogins" Relationship="Self.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" FromRole="AspNetUsers" ToRole="AspNetUserLogins" />
           <NavigationProperty Name="Users" Relationship="Self.FK_Users_ToAspNetUsers" FromRole="AspNetUsers" ToRole="Users" />
           <NavigationProperty Name="AspNetRoles" Relationship="Self.AspNetUserRoles" FromRole="AspNetUsers" ToRole="AspNetRoles" />
+          <NavigationProperty Name="UserRoles" Relationship="DocumentProcessingModel.FK_UserRoles_AspNetUsers" FromRole="AspNetUser" ToRole="UserRole" />
         </EntityType>
         <EntityType Name="User">
           <Key>
@@ -339,11 +413,12 @@
           <Property Name="Lastname" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="Photo" Type="String" MaxLength="120" FixedLength="false" Unicode="true" Nullable="true" />
           <NavigationProperty Name="AspNetUser" Relationship="Self.FK_Users_ToAspNetUsers" FromRole="Users" ToRole="AspNetUsers" />
-          <NavigationProperty Name="CreatedDocuments" Relationship="DocumentProcessingModel.FK_Documents_ToCreator" FromRole="User" ToRole="Document" />
-          <NavigationProperty Name="DocControllerId" Relationship="DocumentProcessingModel.FK_Documents_ToControoller" FromRole="User" ToRole="Document" />
-          <NavigationProperty Name="DocExecutorId" Relationship="DocumentProcessingModel.FK_Documents_ToExecutor" FromRole="User" ToRole="Document" />
-          <NavigationProperty Name="DocManagerId" Relationship="DocumentProcessingModel.FK_Documents_ToManager" FromRole="User" ToRole="Document" />
-        </EntityType>
+          <Property Name="Role" Type="String" Nullable="false" MaxLength="120" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Inspector" Relationship="DocumentProcessingModel.FK_Documents_ToControoller" FromRole="User" ToRole="Document" />
+          <NavigationProperty Name="Creator" Relationship="DocumentProcessingModel.FK_Documents_ToCreator" FromRole="User" ToRole="Document" />
+          <NavigationProperty Name="Executor" Relationship="DocumentProcessingModel.FK_Documents_ToExecutor" FromRole="User" ToRole="Document" />
+          <NavigationProperty Name="Manager" Relationship="DocumentProcessingModel.FK_Documents_ToManager" FromRole="User" ToRole="Document" />
+          </EntityType>
         <Association Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
           <End Role="AspNetUsers" Type="Self.AspNetUser" Multiplicity="1">
             <OnDelete Action="Cascade" />
@@ -410,22 +485,32 @@
             <End Role="AspNetRoles" EntitySet="AspNetRoles" />
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
           </AssociationSet>
-          <EntitySet Name="Documents" EntityType="DocumentProcessingModel.Document" />
           <EntitySet Name="DocumentTypes" EntityType="DocumentProcessingModel.DocumentType" />
+          <EntitySet Name="AffairsNomenclatures" EntityType="DocumentProcessingModel.AffairsNomenclature" />
+          <EntitySet Name="UserRoles" EntityType="DocumentProcessingModel.UserRole" />
+          <AssociationSet Name="FK_UserRoles_AspNetRoles" Association="DocumentProcessingModel.FK_UserRoles_AspNetRoles">
+            <End Role="AspNetRole" EntitySet="AspNetRoles" />
+            <End Role="UserRole" EntitySet="UserRoles" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserRoles_AspNetUsers" Association="DocumentProcessingModel.FK_UserRoles_AspNetUsers">
+            <End Role="AspNetUser" EntitySet="AspNetUsers" />
+            <End Role="UserRole" EntitySet="UserRoles" />
+          </AssociationSet>
+          <EntitySet Name="Documents" EntityType="DocumentProcessingModel.Document" />
+          <AssociationSet Name="FK_Documents_AffairsNomenclature" Association="DocumentProcessingModel.FK_Documents_AffairsNomenclature">
+            <End Role="AffairsNomenclature" EntitySet="AffairsNomenclatures" />
+            <End Role="Document" EntitySet="Documents" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Documents_ToControoller" Association="DocumentProcessingModel.FK_Documents_ToControoller">
+            <End Role="User" EntitySet="Users" />
+            <End Role="Document" EntitySet="Documents" />
+          </AssociationSet>
           <AssociationSet Name="FK_Documents_ToCreator" Association="DocumentProcessingModel.FK_Documents_ToCreator">
             <End Role="User" EntitySet="Users" />
             <End Role="Document" EntitySet="Documents" />
           </AssociationSet>
           <AssociationSet Name="FK_Documents_ToDocumentTypes" Association="DocumentProcessingModel.FK_Documents_ToDocumentTypes">
             <End Role="DocumentType" EntitySet="DocumentTypes" />
-            <End Role="Document" EntitySet="Documents" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Documents_ToResponsible" Association="DocumentProcessingModel.FK_Documents_ToResponsible">
-            <End Role="User" EntitySet="Users" />
-            <End Role="Document" EntitySet="Documents" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Documents_ToControoller" Association="DocumentProcessingModel.FK_Documents_ToControoller">
-            <End Role="User" EntitySet="Users" />
             <End Role="Document" EntitySet="Documents" />
           </AssociationSet>
           <AssociationSet Name="FK_Documents_ToExecutor" Association="DocumentProcessingModel.FK_Documents_ToExecutor">
@@ -437,33 +522,6 @@
             <End Role="Document" EntitySet="Documents" />
           </AssociationSet>
         </EntityContainer>
-        <EntityType Name="Document">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
-          <Property Name="Path" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
-          <Property Name="CreationDate" Type="DateTime" Nullable="false" Precision="0" />
-          <Property Name="CreatorId" Type="Int32" Nullable="false" />
-          <Property Name="TypeId" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="Creator" Relationship="DocumentProcessingModel.FK_Documents_ToCreator" FromRole="Document" ToRole="User" />
-          <NavigationProperty Name="DocumentType" Relationship="DocumentProcessingModel.FK_Documents_ToDocumentTypes" FromRole="Document" ToRole="DocumentType" />
-          <NavigationProperty Name="ResponsibleUser" Relationship="DocumentProcessingModel.FK_Documents_ToResponsible" FromRole="Document" ToRole="User" />
-          <Property Name="DocIndex" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
-          <Property Name="ExecutionPeriod" Type="DateTime" Nullable="false" Precision="0" />
-          <Property Name="RegistrationDate" Type="DateTime" Nullable="false" Precision="0" />
-          <Property Name="DocHeader" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
-          <Property Name="ManagerId" Type="String" />
-          <Property Name="Resolution" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
-          <Property Name="ExecutorId" Type="Int32" />
-          <Property Name="ExecutorNote" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
-          <Property Name="ControllerId" Type="Int32" />
-          <Property Name="ControllerNote" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="User" Relationship="DocumentProcessingModel.FK_Documents_ToControoller" FromRole="Document" ToRole="User" />
-          <NavigationProperty Name="User2" Relationship="DocumentProcessingModel.FK_Documents_ToExecutor" FromRole="Document" ToRole="User" />
-          <NavigationProperty Name="User3" Relationship="DocumentProcessingModel.FK_Documents_ToManager" FromRole="Document" ToRole="User" />
-        </EntityType>
         <EntityType Name="DocumentType">
           <Key>
             <PropertyRef Name="Id" />
@@ -473,6 +531,105 @@
           <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Documents" Relationship="DocumentProcessingModel.FK_Documents_ToDocumentTypes" FromRole="DocumentType" ToRole="Document" />
         </EntityType>
+        <EntityType Name="AffairsNomenclature">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IndexOfCase" Type="String" Nullable="false" MaxLength="15" FixedLength="false" Unicode="true" />
+          <Property Name="SectionName" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="Headline" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Documents" Relationship="DocumentProcessingModel.FK_Documents_AffairsNomenclature" FromRole="AffairsNomenclature" ToRole="Document" />
+        </EntityType>
+        <EntityType Name="UserRole">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="AspNetUsersId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="AspNetRolesId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="Role" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="AspNetRole" Relationship="DocumentProcessingModel.FK_UserRoles_AspNetRoles" FromRole="UserRole" ToRole="AspNetRole" />
+          <NavigationProperty Name="AspNetUser" Relationship="DocumentProcessingModel.FK_UserRoles_AspNetUsers" FromRole="UserRole" ToRole="AspNetUser" />
+        </EntityType>
+        <Association Name="FK_UserRoles_AspNetRoles">
+          <End Type="DocumentProcessingModel.AspNetRole" Role="AspNetRole" Multiplicity="1" />
+          <End Type="DocumentProcessingModel.UserRole" Role="UserRole" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetRole">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="UserRole">
+              <PropertyRef Name="AspNetRolesId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UserRoles_AspNetUsers">
+          <End Type="DocumentProcessingModel.AspNetUser" Role="AspNetUser" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="DocumentProcessingModel.UserRole" Role="UserRole" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="UserRole">
+              <PropertyRef Name="AspNetUsersId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Document">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="Path" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="CreatorId" Type="Int32" Nullable="false" />
+          <Property Name="CreationDate" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="TypeId" Type="Int32" Nullable="false" />
+          <Property Name="DocIndex" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="ExecutionPeriod" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="RegistrationDate" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="DocHeader" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="ManagerId" Type="Int32" />
+          <Property Name="Resolution" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="ExecutorId" Type="Int32" />
+          <Property Name="ExecutorNote" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="ControllerId" Type="Int32" />
+          <Property Name="ControllerNote" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="NomenclatureId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="AffairsNomenclature" Relationship="DocumentProcessingModel.FK_Documents_AffairsNomenclature" FromRole="Document" ToRole="AffairsNomenclature" />
+          <NavigationProperty Name="Inspector" Relationship="DocumentProcessingModel.FK_Documents_ToControoller" FromRole="Document" ToRole="User" />
+          <NavigationProperty Name="Creator" Relationship="DocumentProcessingModel.FK_Documents_ToCreator" FromRole="Document" ToRole="User" />
+          <NavigationProperty Name="DocumentType" Relationship="DocumentProcessingModel.FK_Documents_ToDocumentTypes" FromRole="Document" ToRole="DocumentType" />
+          <NavigationProperty Name="Executor" Relationship="DocumentProcessingModel.FK_Documents_ToExecutor" FromRole="Document" ToRole="User" />
+          <NavigationProperty Name="Manager" Relationship="DocumentProcessingModel.FK_Documents_ToManager" FromRole="Document" ToRole="User" />
+        </EntityType>
+        <Association Name="FK_Documents_AffairsNomenclature">
+          <End Type="DocumentProcessingModel.AffairsNomenclature" Role="AffairsNomenclature" Multiplicity="1" />
+          <End Type="DocumentProcessingModel.Document" Role="Document" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AffairsNomenclature">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Document">
+              <PropertyRef Name="NomenclatureId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Documents_ToControoller">
+          <End Type="DocumentProcessingModel.User" Role="User" Multiplicity="0..1" />
+          <End Type="DocumentProcessingModel.Document" Role="Document" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Document">
+              <PropertyRef Name="ControllerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Documents_ToCreator">
           <End Type="DocumentProcessingModel.User" Role="User" Multiplicity="1" />
           <End Type="DocumentProcessingModel.Document" Role="Document" Multiplicity="*" />
@@ -494,30 +651,6 @@
             </Principal>
             <Dependent Role="Document">
               <PropertyRef Name="TypeId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Documents_ToResponsible">
-          <End Type="DocumentProcessingModel.User" Role="User" Multiplicity="1" />
-          <End Type="DocumentProcessingModel.Document" Role="Document" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="User">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Document">
-              <PropertyRef Name="CurrentResponsibleId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Documents_ToControoller">
-          <End Type="DocumentProcessingModel.User" Role="User" Multiplicity="0..1" />
-          <End Type="DocumentProcessingModel.Document" Role="Document" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="User">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Document">
-              <PropertyRef Name="ControllerId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -599,6 +732,7 @@
           <EntitySetMapping Name="Users">
             <EntityTypeMapping TypeName="DocumentProcessingModel.User">
               <MappingFragment StoreEntitySet="Users">
+                <ScalarProperty Name="Role" ColumnName="Role" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="AspnetUserId" ColumnName="AspnetUserId" />
                 <ScalarProperty Name="Firstname" ColumnName="Firstname" />
@@ -615,9 +749,39 @@
               <ScalarProperty Name="Id" ColumnName="UserId" />
             </EndProperty>
           </AssociationSetMapping>
+          <EntitySetMapping Name="DocumentTypes">
+            <EntityTypeMapping TypeName="DocumentProcessingModel.DocumentType">
+              <MappingFragment StoreEntitySet="DocumentTypes">
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AffairsNomenclatures">
+            <EntityTypeMapping TypeName="DocumentProcessingModel.AffairsNomenclature">
+              <MappingFragment StoreEntitySet="AffairsNomenclature">
+                <ScalarProperty Name="Headline" ColumnName="Headline" />
+                <ScalarProperty Name="SectionName" ColumnName="SectionName" />
+                <ScalarProperty Name="IndexOfCase" ColumnName="IndexOfCase" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UserRoles">
+            <EntityTypeMapping TypeName="DocumentProcessingModel.UserRole">
+              <MappingFragment StoreEntitySet="UserRoles">
+                <ScalarProperty Name="Role" ColumnName="Role" />
+                <ScalarProperty Name="AspNetRolesId" ColumnName="AspNetRolesId" />
+                <ScalarProperty Name="AspNetUsersId" ColumnName="AspNetUsersId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="Documents">
             <EntityTypeMapping TypeName="DocumentProcessingModel.Document">
               <MappingFragment StoreEntitySet="Documents">
+                <ScalarProperty Name="NomenclatureId" ColumnName="NomenclatureId" />
                 <ScalarProperty Name="ControllerNote" ColumnName="ControllerNote" />
                 <ScalarProperty Name="ControllerId" ColumnName="ControllerId" />
                 <ScalarProperty Name="ExecutorNote" ColumnName="ExecutorNote" />
@@ -629,18 +793,9 @@
                 <ScalarProperty Name="ExecutionPeriod" ColumnName="ExecutionPeriod" />
                 <ScalarProperty Name="DocIndex" ColumnName="DocIndex" />
                 <ScalarProperty Name="TypeId" ColumnName="TypeId" />
-                <ScalarProperty Name="CreatorId" ColumnName="CreatorId" />
                 <ScalarProperty Name="CreationDate" ColumnName="CreationDate" />
+                <ScalarProperty Name="CreatorId" ColumnName="CreatorId" />
                 <ScalarProperty Name="Path" ColumnName="Path" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="DocumentTypes">
-            <EntityTypeMapping TypeName="DocumentProcessingModel.DocumentType">
-              <MappingFragment StoreEntitySet="DocumentTypes">
-                <ScalarProperty Name="Description" ColumnName="Description" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>

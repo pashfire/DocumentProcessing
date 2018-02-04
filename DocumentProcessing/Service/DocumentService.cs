@@ -1,78 +1,122 @@
 ﻿using DocumentProcessing.DAL;
 using DocumentProcessing.Infrastructure.Helpers;
+using DocumentProcessing.Models;
 using DocumentProcessing.Models.Document;
 using DocumentProcessing.Models.User;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web.Mvc;
 
 namespace DocumentProcessing.Service
 {
     public class DocumentService
     {
-        private GenericRepository<Document> documentsRepo;
-        private GenericRepository<DocumentType> documentTypesRepo;
-        private GenericRepository<User> userRepo;
+        private GenericRepository<Document> _documentsRepo;
+        private GenericRepository<DocumentType> _documentTypesRepo;
+        private GenericRepository<User> _userRepo;
+        private GenericRepository<AffairsNomenclature> _nomenclatureRepo;
 
         public DocumentService(DocumentProcessingEntities dataContext)
         {
-            documentsRepo = new GenericRepository<Document>(dataContext);
-            documentTypesRepo = new GenericRepository<DocumentType>(dataContext);
-            userRepo = new GenericRepository<User>(dataContext);
+            _documentsRepo = new GenericRepository<Document>(dataContext);
+            _documentTypesRepo = new GenericRepository<DocumentType>(dataContext);
+            _userRepo = new GenericRepository<User>(dataContext);
+            _nomenclatureRepo = new GenericRepository<AffairsNomenclature>(dataContext);
         }
 
         public DocumentModel GetDocument(int id)
         {
-            Document document = documentsRepo.GetById(id);
+            Document document = _documentsRepo.GetById(id);
             return document == null ? null : DocumentModel.Map(document);
         }
 
         public DocumentModel GetDocument(int id, int userId)
         {
-            var document = documentsRepo.GetById(id);
+          
+            var document = _documentsRepo.GetById(id);
 
-            var allTypes = documentTypesRepo.Get()
+            var allTypes = _documentTypesRepo.Get()
                     .Select(DocumentTypeModel.Map).ToList();
-            var possibleUsersToAssign = userRepo.Get(u => u.Id != userId)
-                    ?.Select(UserModel.Map).ToList();
 
+            var allNomenclature = _nomenclatureRepo.Get()
+                   .Select(NomenclatureModel.Map).ToList();
+
+            var possibleManagers = _userRepo.Get(u => u.Role == "Manager")
+                        ?.Select(UserModel.Map).ToList();
+
+            var possibleExecutors = _userRepo.Get(u => u.Role == "Executor")
+                        ?.Select(UserModel.Map).ToList();
+
+            var possibleControllers = _userRepo.Get(u => u.Role == "Inspector")
+                        ?.Select(UserModel.Map).ToList();
+            //if (document != null)
+            //{
+            //    if (document.ExecutorId == 0)
+            //    {
+            //        document.ExecutorId = userId;
+            //    }
+            //    if (document.ControllerId == 0)
+            //    {
+            //        document.ControllerId = userId;
+            //    }
+            //}
+           
             return document == null ? null : DocumentModel
-                    .Map(document, allTypes, possibleUsersToAssign);
+                    .Map(document, allTypes, allNomenclature, possibleManagers, possibleExecutors, possibleControllers);
         }
 
         public List<DocumentModel> GetDocumentsByCreator(int userId)
         {
-            return documentsRepo.Get(doc => doc.CreatorId == userId)
+            return _documentsRepo.Get(doc => doc.CreatorId == userId)
                 ?.Select(doc => DocumentModel.Map(doc)).ToList();
         }
 
-        public List<DocumentModel> GetDocumentsByResponsible(int userId)
+        public List<DocumentModel> GetDocumentsByManager(int userId)
         {
-            return documentsRepo.Get(doc => doc.CurrentResponsibleId == userId)
+            return _documentsRepo.Get(doc => doc.ManagerId == userId)
+                ?.Select(doc => DocumentModel.Map(doc)).ToList();
+        }
+
+        public List<DocumentModel> GetDocumentsByExecutor(int userId)
+        {
+            return _documentsRepo.Get(doc => doc.ExecutorId == userId)
+                ?.Select(doc => DocumentModel.Map(doc)).ToList();
+        }
+
+        public List<DocumentModel> GetDocumentsByController(int userId)
+        {
+            return _documentsRepo.Get(doc => doc.ControllerId == userId)
                 ?.Select(doc => DocumentModel.Map(doc)).ToList();
         }
 
         public void UpdateDocument(DocumentModel model)
         {
-            Document document = documentsRepo.GetById(model.Id);
+            Document document = _documentsRepo.GetById(model.Id);
 
             FileHelper.DeleteFile(document.Path);
 
             document.Name = model.Name;
             document.Path = model.Path;
             document.TypeId = model.Type;
-            document.CurrentResponsibleId = model.CurrentResponsibleId;
+            document.DocHeader = model.DocHeader;
+            document.ManagerId = model.ManagerId;
+            document.Resolution = model.Resolution;
+            document.ExecutorId = model.ExecutorId;
+            document.ExecutorNote = model.ExecutorNote;
+            document.ControllerId = model.ControllerId;
+            document.ControllerNote = model.ControllerNote;
 
-            documentsRepo.Update(document);
-            documentsRepo.Save();
+            _documentsRepo.Update(document);
+            _documentsRepo.Save();
         }
 
         public void DeleteDocument(int id, string serverPath)
         {
-            Document document = documentsRepo.GetById(id);
+            Document document = _documentsRepo.GetById(id);
             var path = serverPath + document.Path;
-            documentsRepo.Delete(document);
+            _documentsRepo.Delete(document);
             FileHelper.DeleteFile(path);
         } 
 
@@ -80,15 +124,28 @@ namespace DocumentProcessing.Service
         {
             Document document = new Document()
             {
-                CreationDate = DateTime.Now,
+
                 Name = model.Name,
-                TypeId = model.Type,
+                Path = model.Path,
                 CreatorId = model.CreatorId,
-                CurrentResponsibleId = model.CurrentResponsibleId,
-                Path = model.Path
+                CreationDate = model.Created,
+                TypeId = model.Type,
+                ExecutionPeriod = model.ExecutionPeriod,
+                RegistrationDate = DateTime.Now.ToShortDateString(),
+                NomenclatureId = model.NomenclatureId,
+                
+                DocIndex = model.DocIndex,
+                DocHeader = model.DocHeader,
+                ManagerId = model.ManagerId,
+                
+                Resolution = model.Resolution,
+                ExecutorId = model.ExecutorId,
+                ExecutorNote = model.ExecutorNote,
+                ControllerId = model.ControllerId,
+                ControllerNote = model.ControllerNote
             };
 
-            documentsRepo.Insert(ref document);
+            _documentsRepo.Insert(ref document);
             model.Id = document.Id;
 
             return model;
@@ -100,9 +157,11 @@ namespace DocumentProcessing.Service
             {
                 CreatorId = user.Id,
                 Creator = UserModel.Map(user),
-                AllTypes = documentTypesRepo.Get()
+                AllNomenclature = _nomenclatureRepo.Get()
+                   .Select(NomenclatureModel.Map).ToList(),
+                AllTypes = _documentTypesRepo.Get()
                     .Select(DocumentTypeModel.Map).ToList(),
-                PossibleUsersToAssign = userRepo.Get(u => u.Id != user.Id)
+                Managers = _userRepo.Get(u => u.Role == "Manager")
                     ?.Select(UserModel.Map).ToList()
             };
 

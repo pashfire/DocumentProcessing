@@ -29,6 +29,26 @@ namespace DocumentProcessing.Controllers
             DocumentViewModel model = new DocumentViewModel()
             {
                 DocumentModel = documentService.GetDocument(id, this.CurrentUser.Id),
+                //DocumentModel = documentService.GetDocument(id),
+                IsDocumentExists = true
+            };
+            if (model.DocumentModel == null)
+            {
+                model.IsDocumentExists = false;
+                model.DocumentModel = documentService.CreateDocumentModel(this.CurrentUser);
+            }
+
+            return View(model);
+        }
+
+        [HttpGet]
+        [Authorize]
+        public ActionResult All(int id = 0)
+        {
+            DocumentViewModel model = new DocumentViewModel()
+            {
+                DocumentModel = documentService.GetDocument(id, this.CurrentUser.Id),
+                //DocumentModel = documentService.GetDocument(id),
                 IsDocumentExists = true
             };
             if (model.DocumentModel == null)

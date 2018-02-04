@@ -1,6 +1,6 @@
 ﻿"use strict";
-
 var documentPageVueInstance;
+
 
 document.addEventListener("DOMContentLoaded", function (event) {
     Vue.use(VuelidateErrorExtractor.default, {
@@ -10,30 +10,51 @@ document.addEventListener("DOMContentLoaded", function (event) {
     documentPageVueInstance = new Vue({
         el: '#documentPage',
         data: () => ({
-            form: {
-                Name: null,
-                CreatorId: null,
-                Creator: null,
+            
+            form: {                
                 Id: null,
+                Name: null,
                 Path: null,
-                CurrentResponsibleId: null,
-                Responsible: null,
+                CreatorId: null,
+                RegistrationDate: new Date(),
+                Created: new Date(),
+                Creator: null,
                 Type: null,
                 AllTypes: null,
+                ExecutionPeriod: new Date(),
+                NomenclatureId: null,
+                DocIndex: null,
+                DocHeader: null,
+                ManagerId: null,
+                Resolution: null,
+                ExecutorId: null,
+                ExecutorNote: null,
+                ControllerId: null,
+                ControllerNote: null,
                 DocumentFile: null,
-                PossibleUsersToAssign: null,
-                Created: null,
+                Managers: null,
+                AllNomenclature: null
+                
             },
-            
             editing: true,
             sending: false,
             lastUser: null
         }),
-        computed: {
-            orderedTypes: function () {
-                return this.AllTypes
-            }
-        },
+       
+        //computed: {
+        //    orderedTypes: function () {
+        //        return this.AllTypes
+        //    }
+        //    //creationDate: function () {
+        //    //    return new Date()
+        //    //},
+        //    //regDate: function () {
+        //    //    return new Date()
+        //    //},
+        //    //expirationDate: function () {
+        //    //    return new Date()
+        //    //},
+        //},
 
         mounted: function () {
             this.editing = !window.model.IsDocumentExists;
@@ -47,11 +68,20 @@ document.addEventListener("DOMContentLoaded", function (event) {
                     required: validators.required,
                     minLength: validators.minLength(5)
                 },
+                Created: {
+                    required: validators.required
+                },
+                ExecutionPeriod: {
+                    required: validators.required
+                },
+                NomenclatureId: {
+                    required: validators.required
+                },
                 Type: {
                     required: validators.required,
                     between: validators.between(1, 99999999)
                 },
-                CurrentResponsibleId: {
+                ManagerId: {
                     required: validators.required,
                     between: validators.between(1, 99999999)
                 },
@@ -78,18 +108,25 @@ document.addEventListener("DOMContentLoaded", function (event) {
             orderedTypes: function () {
                 return _.orderBy(this.AllTypes, 'Name')
             },
+
+            
+
             saveDocument() {
                 this.sending = true;
                 var _this = this;
-
+                var regDate = new Date();
                 var formData = new FormData(document.getElementById('documentForm'));
 
                 formData.append("Id", this.form.Id);
                 formData.append("Name", this.form.Name);
+                formData.append("Path", this.form.DocumentFile);                  
                 formData.append("CreatorId", this.form.CreatorId);
-                formData.append("CurrentResponsibleId", this.form.CurrentResponsibleId);
+                formData.append("Created", this.form.Created);
                 formData.append("Type", this.form.Type);
-                
+                formData.append("ExecutionPeriod", this.form.ExecutionPeriod);
+                formData.append("RegistrationDate", regDate.toLocaleDateString());
+                formData.append("ManagerId", this.form.ManagerId);
+                formData.append("NomenclatureId", this.form.NomenclatureId);
 
                 Vue.http.post('/Document/Index', formData)
                     .then(response => {

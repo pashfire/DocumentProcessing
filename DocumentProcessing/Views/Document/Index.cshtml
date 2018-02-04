@@ -3,7 +3,6 @@
     ViewBag.Title = "Документ";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
 <div id="documentPage">
     <div v-if="editing" class="container">
         <form id="documentForm" novalidate class="md-layout-row md-gutter" @@submit.prevent="validateDocument">
@@ -12,7 +11,6 @@
                 <md-card-header>
                     <div class="md-title">Создание документа</div>
                 </md-card-header>
-
                 <md-card-content>
                     <div class="md-layout-row md-layout-wrap md-gutter">
                         <div class="md-flex md-flex-small-100">
@@ -23,42 +21,70 @@
                                 <span class="md-error" v-else-if"!$v.form.Name.minlength">Неверное имя</span>
                             </md-field>
                         </div>
-
                         <div class="md-flex md-flex-small-100">
                             <md-field :class="getValidationClass('Type')">
                                 <label for="typeId">Тип документа</label>
                                 <md-select name="typeId" id="typeId" v-model="form.Type" md-dense :disabled="sending">
-                                    <md-option v-for="type in form.AllTypes" :value="type.Id">{{type.Name}}</md-option>
+                                    <md-option v-for="type in form.AllTypes" :key="type.Name" :value="type.Id">{{type.Name}}</md-option>
                                 </md-select>
                                 <span class="md-error" v-if="!$v.form.Type.required">Нужно выбрать тип документа</span>
                             </md-field>
                         </div>
 
                         <div class="md-flex md-flex-small-100">
-                            <md-field :class="getValidationClass('CurrentResponsibleId')">
-                                <label for="currentResponsibleId">Кому отправить</label>
-                                <md-select name="currentResponsibleId" id="currentResponsibleId" v-model="form.CurrentResponsibleId" md-dense :disabled="sending">
-                                    <md-option v-for="user in form.PossibleUsersToAssign" :value="user.Id">{{user.Firstname}} {{user.Lastname}}</md-option>
-                                </md-select>
-                                <span class="md-error" v-if="!$v.form.CurrentResponsibleId.required">Нужно выбрать кому отправить документ.</span>
+                            
+                            <md-icon>event</md-icon>
+                            <label>Дата создания</label>
+                            <md-field :class="getValidationClass('Created')">
+                                <md-input type="date" v-model="form.Created"></md-input>
                             </md-field>
+                            <p>Дата создания: {{form.Created}}</p>
                         </div>
 
                         <div class="md-flex md-flex-small-100">
-                            <md-field :class="getValidationClass('DocumentFile')">
-                                <label>Документ</label>
-                                <md-file name="DocumentFile" id="DocumentFile" v-model="form.DocumentFile" md-dense :disabled="sending" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx" />
-                                <span class="md-error" v-if="!$v.form.DocumentFile.required">Нужно выбрать файл.</span>
+                            <md-icon>event</md-icon>
+                            <label>Период исполнения</label>
+                            <md-field name="dateField" :class="getValidationClass('ExecutionPeriod')">
+                                <md-input type="date" v-model="form.ExecutionPeriod"></md-input>
                             </md-field>
+                            <p>Период исполнения: {{form.ExecutionPeriod}}</p>
                         </div>
-                    </div>
 
-                    <md-button type="submit" class="md-primary" :disabled="sending">Добавить документ</md-button>
-                </md-card-content>
+                            <div class="md-flex md-flex-small-100">
+                                <md-field :class="getValidationClass('NomenclatureId')">
+                                    <label for="typeId">Номенклатура дел</label>
+                                    <md-select name="nomenclatureId" id="nomenclatureId" v-model="form.NomenclatureId" md-dense :disabled="sending">
+                                        <md-option v-for="nomenclature in form.AllNomenclature" :key="nomenclature.Id" :value="nomenclature.Id">{{nomenclature.IndexOfCase + " " + nomenclature.Headline + " " + nomenclature.SectionName}}</md-option>
+                                    </md-select>
+                                    <span class="md-error" v-if="!$v.form.Type.required">Нужно выбрать тип документа</span>
+                                </md-field>
+                            </div>
 
+
+                            <div class="md-flex md-flex-small-100">
+                                <md-field :class="getValidationClass('ManagerId')">
+                                    <label for="managerId">Руководитель</label>
+                                    <md-select name="managerId" id="managerId" v-model="form.ManagerId" md-dense :disabled="sending">
+                                        <md-option v-for="user in form.Managers" :key="user.Id" :value="user.Id">{{user.Firstname}} {{user.Lastname}}</md-option>
+                                    </md-select>
+                                    <span class="md-error" v-if="!$v.form.ManagerId.required">Нужно выбрать кому отправить документ.</span>
+                                </md-field>
+                            </div>
+
+                            <div class="md-flex md-flex-small-100">
+                                <md-field :class="getValidationClass('DocumentFile')">
+                                    <label>Документ</label>
+                                    <md-file name="DocumentFile" id="DocumentFile" v-model="form.DocumentFile" md-dense :disabled="sending" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx" />
+                                    <span class="md-error" v-if="!$v.form.DocumentFile.required">Нужно выбрать файл.</span>
+                                </md-field>
+                            </div>
+                            <p>DocumentFile: {{form.DocumentFile}}</p>
+                        </div>
+                        <md-button type="submit" class="md-primary" :disabled="sending">Добавить документ</md-button>
+</md-card-content>
                 <md-progress-bar md-mode="indeterminate" v-if="sending" />
             </md-card>
-            <md-snackbar md-active.sync="editing">Документ "{{ form.Name }}" успешно добавлен!</md-snackbar>
+            <md-snackbar :md-active.sync="editing">Документ "{{ form.Name }}" успешно добавлен!</md-snackbar>
         </form>
     </div>
     <div v-else>
@@ -66,20 +92,18 @@
             <md-card-header>
                 <div class="md-title">{{form.Name}}</div>
             </md-card-header>
-
             <md-card-content>
                 <md-list class="md-triple-line">
                     <md-list-item>
                         <div class="md-list-item-text">
                             <span>{{form.TypeModel.Name}}</span>
                             <span>Создатель: {{form.Creator.Firstname}} {{form.Creator.Lastname}}</span>
-                            <span>Ответственный: {{form.Responsible.Firstname}} {{form.Responsible.Lastname}}</span>
+                            <span>Руководитель: {{form.Manager.Firstname}} {{form.Manager.Lastname}}</span>
                             <span>Создан: {{form.Created}}</span>
                         </div>
                     </md-list-item>
                 </md-list>
             </md-card-content>
-
             <md-card-actions>
                 <md-button @@click="editing = !editing"><a>Редактировать</a></md-button>
                 <md-button>
@@ -96,11 +120,40 @@
         display: contents;
         vertical-align: central;
     }
-</style>
 
+    .md-menu-content {
+        box-shadow: 0 5px 5px -3px rgba(0,0,0,.2), 0 8px 10px 1px rgba(0,0,0,.14), 0 3px 14px 2px rgba(0,0,0,.12);
+        min-width: 350px;
+        max-width: 500px;
+        max-height: 35vh;
+        vertical-align: central;
+        display: compact;
+        display: flex;
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+        flex-direction: column;
+        position: absolute;
+        z-index: 8;
+        border-radius: 2px;
+        transition: opacity .3s cubic-bezier(.25,.8,.25,1),-webkit-transform .2s cubic-bezier(.25,.8,.25,1);
+        transition: transform .2s cubic-bezier(.25,.8,.25,1),opacity .3s cubic-bezier(.25,.8,.25,1);
+        transition: transform .2s cubic-bezier(.25,.8,.25,1),opacity .3s cubic-bezier(.25,.8,.25,1),-webkit-transform .2s cubic-bezier(.25,.8,.25,1);
+        will-change: opacity,transform,top,left !important;
+    }
+    .md-input[type=date] {
+        max-width: 150px;
+        text-align: left;
+        
+    }
+    .md-field {
+        left: 0px;
+        text-align: left;
+    }
+</style>
 @section scripts{
     <script>
         var model = @Html.Raw(JsonConvert.SerializeObject(Model));
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>
     <script src="~/Scripts/Document/Index.js" defer></script>
 }

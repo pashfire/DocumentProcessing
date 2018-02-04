@@ -199,6 +199,27 @@
     <Compile Include="Controllers\DefaultController.cs" />
     <Compile Include="Controllers\DocumentController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="DAL\AffairsNomenclature.cs">
+      <DependentUpon>DocumentProcessingModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DAL\AspNetRole.cs">
+      <DependentUpon>DocumentProcessingModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DAL\AspNetUser.cs">
+      <DependentUpon>DocumentProcessingModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DAL\AspNetUserClaim.cs">
+      <DependentUpon>DocumentProcessingModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DAL\AspNetUserLogin.cs">
+      <DependentUpon>DocumentProcessingModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DAL\Document.cs">
+      <DependentUpon>DocumentProcessingModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DAL\DocumentType.cs">
+      <DependentUpon>DocumentProcessingModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="DAL\GenericRepository.cs" />
     <Compile Include="DAL\DocumentProcessingModel.Context.cs">
       <AutoGen>True</AutoGen>
@@ -216,6 +237,12 @@
       <DependentUpon>DocumentProcessingModel.edmx</DependentUpon>
     </Compile>
     <Compile Include="DAL\IGenericRepository.cs" />
+    <Compile Include="DAL\User.cs">
+      <DependentUpon>DocumentProcessingModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DAL\UserRole.cs">
+      <DependentUpon>DocumentProcessingModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -224,6 +251,7 @@
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Document\DocumentModel.cs" />
     <Compile Include="Models\Document\DocumentTypeModel.cs" />
+    <Compile Include="Models\Document\NomenclatureModel.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\User\RegisterModel.cs" />
