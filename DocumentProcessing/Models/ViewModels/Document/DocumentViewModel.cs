@@ -10,5 +10,6 @@ namespace DocumentProcessing.Models.ViewModels.Document
     {
         public bool IsDocumentExists { get; set; }
         public DocumentModel DocumentModel { get; set; }
+        public List<DocumentModel> DocumentModels { get; set; }
     }
 }

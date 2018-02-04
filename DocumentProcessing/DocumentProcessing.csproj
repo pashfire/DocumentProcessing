@@ -290,6 +290,7 @@
     <Content Include="DAL\DocumentProcessingModel.edmx.diagram">
       <DependentUpon>DocumentProcessingModel.edmx</DependentUpon>
     </Content>
+    <Content Include="Scripts\Document\All.js" />
     <Content Include="Scripts\Document\Index.js" />
     <Content Include="Scripts\Default\Index.js" />
     <Content Include="Scripts\Layout.js" />
@@ -338,6 +339,7 @@
   <ItemGroup>
     <None Include="packages.config" />
     <Content Include="Views\Document\Index.cshtml" />
+    <Content Include="Views\Document\All.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />

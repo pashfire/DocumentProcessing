@@ -47,11 +47,11 @@ namespace DocumentProcessing.Controllers
         {
             DocumentViewModel model = new DocumentViewModel()
             {
-                DocumentModel = documentService.GetDocument(id, this.CurrentUser.Id),
+                DocumentModels = documentService.GetDocumentsByCreator(this.CurrentUser.Id),
                 //DocumentModel = documentService.GetDocument(id),
                 IsDocumentExists = true
             };
-            if (model.DocumentModel == null)
+            if (model.DocumentModels == null)
             {
                 model.IsDocumentExists = false;
                 model.DocumentModel = documentService.CreateDocumentModel(this.CurrentUser);
