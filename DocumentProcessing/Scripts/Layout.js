@@ -8,7 +8,9 @@ document.addEventListener("DOMContentLoaded", function (event) {
 
     appVueInstance = new Vue({
         el: '#app',
+        
         data: () => ({
+            name: "Waterfall",
             showNavigation: false,
             showSidepanel: false
         })

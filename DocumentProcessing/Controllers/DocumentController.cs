@@ -23,7 +23,7 @@ namespace DocumentProcessing.Controllers
         }
 
         [HttpGet]
-        [Authorize]
+        [Authorize(Roles= "Admin, Clerk")]
         public ActionResult Index(int id = 0)
         {
             DocumentViewModel model = new DocumentViewModel()
@@ -42,26 +42,46 @@ namespace DocumentProcessing.Controllers
         }
 
         [HttpGet]
-        [Authorize]
-        public ActionResult All(int id = 0)
+        [Authorize(Roles = "Admin, Clerk")]
+        public ActionResult All()
         {
-            DocumentViewModel model = new DocumentViewModel()
+            if (CurrentUser.Role == "Clerk")
             {
-                DocumentModels = documentService.GetDocumentsByCreator(this.CurrentUser.Id),
-                //DocumentModel = documentService.GetDocument(id),
-                IsDocumentExists = true
-            };
-            if (model.DocumentModels == null)
-            {
-                model.IsDocumentExists = false;
-                model.DocumentModel = documentService.CreateDocumentModel(this.CurrentUser);
-            }
+                DocumentViewModel model = new DocumentViewModel()
+                {
+                    AllDocumentsModel = documentService.GetAllDocuments(CurrentUser.Id),
+                    //DocumentModel = documentService.GetDocument(id),
+                    IsDocumentExists = true
+                };
+                if (model.AllDocumentsModel == null)
+                {
+                    model.IsDocumentExists = false;
+                    model.DocumentModel = documentService.CreateDocumentModel(this.CurrentUser);
+                }
 
-            return View(model);
+                return View(model);
+            } else if (CurrentUser.Role == "Admin")
+            {
+                DocumentViewModel model = new DocumentViewModel()
+                {
+
+                    AllDocumentsModel = documentService.GetAllDocuments(),
+                    //DocumentModel = documentService.GetDocument(id),
+                    IsDocumentExists = true
+                };
+                if (model.AllDocumentsModel == null)
+                {
+                    model.IsDocumentExists = false;
+                    model.DocumentModel = documentService.CreateDocumentModel(this.CurrentUser);
+                }
+
+                return View(model);
+            }
+            return null;
         }
 
         [HttpPost]
-        [Authorize]
+        [Authorize(Roles = "Admin, Clerk")]
         public ActionResult Index(DocumentModel model)
         {
             var file = Request.Files["DocumentFile"];
@@ -94,6 +114,78 @@ namespace DocumentProcessing.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
             return FileHelper.GetFilePathResult(Server.MapPath("~") + document.Path);
+        }
+
+        //for managers
+        [HttpGet]
+        [Authorize(Roles = "Admin, Manager")]
+        public ActionResult Resolutions()
+        {
+            if (CurrentUser.Role == "Manager")
+            {
+                DocumentViewModel model = new DocumentViewModel()
+                {
+                    AllDocumentsModel = documentService.GetDocumentsByManager(CurrentUser.Id),
+                    //DocumentModel = documentService.GetDocument(id),
+                    IsDocumentExists = true
+                };
+
+                return View(model);
+            }
+            else if (CurrentUser.Role == "Admin")
+            {
+                DocumentViewModel model = new DocumentViewModel()
+                {
+
+                    AllDocumentsModel = documentService.GetAllDocuments(),
+                    //DocumentModel = documentService.GetDocument(id),
+                    IsDocumentExists = true
+                };
+                if (model.AllDocumentsModel == null)
+                {
+                    model.IsDocumentExists = false;
+                    model.DocumentModel = documentService.CreateDocumentModel(this.CurrentUser);
+                }
+
+                return View(model);
+            }
+            return null;
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Admin, Manager")]
+        public ActionResult Resolution(int id = 0)
+        {
+            DocumentViewModel model = new DocumentViewModel()
+            {
+                DocumentModel = documentService.GetDocument(id, this.CurrentUser.Id),
+                //DocumentModel = documentService.GetDocument(id),
+                IsDocumentExists = true
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin, Manager")]
+        public ActionResult Resolution(DocumentModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                
+                if (model.Id == 0)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
+                else
+                {
+                    documentService.UpdateDocument(model);
+                }
+
+                return new HttpStatusCodeResult(HttpStatusCode.OK);
+            }
+
+            return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
         }
     }
 }

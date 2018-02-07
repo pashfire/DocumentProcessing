@@ -260,3 +260,5 @@ paket-files/
 __pycache__/
 *.pyc
 /DocumentProcessing/App_Data/Documents/alex@ex.com
+/DocumentProcessing/App_Data/Documents/tatpank@ex.com
+/DocumentProcessing/App_Data/Documents

@@ -17,8 +17,8 @@
 </head>
 <body>
     <div id="app">
-        <div class="page-container md-layout-column">
-            <md-toolbar>
+        <div class="page-container md-layout-column" mode="fixed">
+            <md-toolbar >
                 <md-button class="md-icon-button" @@click="showNavigation = true">
                     <md-icon>menu</md-icon>
                 </md-button>
@@ -32,26 +32,67 @@
                 <md-toolbar class="md-transparent" md-elevation="0">
                     <span class="md-title">Меню</span>
                 </md-toolbar>
+                @using Microsoft.AspNet.Identity
+                @if (User.IsInRole("Admin"))
+    {
+            <md-list>
+                <md-list-item>
+                    <md-icon>home</md-icon>
+                    <span class="md-list-item-text">@Html.ActionLink("Главная", "Index", "Default", routeValues: null, htmlAttributes: new { title = "Главная" })</span>
 
-                <md-list>
-                    <md-list-item>
-                        <md-icon>home</md-icon>
-                        <span class="md-list-item-text">@Html.ActionLink("Главная", "Index", "Default", routeValues: null, htmlAttributes: new { title = "Главная" })</span>
+                </md-list-item>
 
-                    </md-list-item>
+                <md-list-item>
+                    <md-icon>work</md-icon>
+                    <span class="md-list-item-text">@Html.ActionLink("Все документы", "All", "Document", routeValues: null, htmlAttributes: new { title = "Документы" })</span>
 
-                    <md-list-item>
-                        <md-icon>work</md-icon>
-                        <span class="md-list-item-text">@Html.ActionLink("Мои документы", "Index", "Document", routeValues: null, htmlAttributes: new { title = "Документы" })</span>
+                </md-list-item>
 
-                    </md-list-item>
+                <md-list-item>
+                    <md-icon>note_add</md-icon>
+                    <span class="md-list-item-text">@Html.ActionLink("Новый документ", "Index", "Document", routeValues: null, htmlAttributes: new { title = "Новый документ" })</span>
 
-                    <md-list-item>
-                        <md-icon>note_add</md-icon>
-                        <span class="md-list-item-text">@Html.ActionLink("Новый документ", "Index", "Document", routeValues: null, htmlAttributes: new { title = "Новый документ" })</span>
+                </md-list-item>
+            </md-list>
+}
+else if (User.IsInRole("Clerk"))
+{
+            <md-list>
+                <md-list-item>
+                    <md-icon>home</md-icon>
+                    <span class="md-list-item-text">@Html.ActionLink("Главная", "Index", "Default", routeValues: null, htmlAttributes: new { title = "Главная" })</span>
 
-                    </md-list-item>
-                </md-list>
+                </md-list-item>
+
+                <md-list-item>
+                    <md-icon>work</md-icon>
+                    <span class="md-list-item-text">@Html.ActionLink("Мои документы", "All", "Document", routeValues: null, htmlAttributes: new { title = "Документы" })</span>
+
+                </md-list-item>
+
+                <md-list-item>
+                    <md-icon>note_add</md-icon>
+                    <span class="md-list-item-text">@Html.ActionLink("Новый документ", "Index", "Document", routeValues: null, htmlAttributes: new { title = "Новый документ" })</span>
+
+                </md-list-item>
+            </md-list>
+            }
+            else if (User.IsInRole("Manager"))
+            {
+                        <md-list>
+                            <md-list-item>
+                                <md-icon>home</md-icon>
+                                <span class="md-list-item-text">@Html.ActionLink("Главная", "Index", "Default", routeValues: null, htmlAttributes: new { title = "Главная" })</span>
+
+                            </md-list-item>
+
+                            <md-list-item>
+                                <md-icon>work</md-icon>
+                                <span class="md-list-item-text">@Html.ActionLink("Мои документы", "Resolutions", "Document", routeValues: null, htmlAttributes: new { title = "Документы" })</span>
+                            </md-list-item>
+
+                        </md-list>
+            }
             </md-drawer>
         </div>
     </div>

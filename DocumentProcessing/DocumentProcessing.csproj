@@ -249,6 +249,7 @@
     <Compile Include="Infrastructure\Enums\UserRoles.cs" />
     <Compile Include="Infrastructure\Helpers\FileHelper.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\Document\DocumentsModel.cs" />
     <Compile Include="Models\Document\DocumentModel.cs" />
     <Compile Include="Models\Document\DocumentTypeModel.cs" />
     <Compile Include="Models\Document\NomenclatureModel.cs" />
@@ -265,6 +266,7 @@
   <ItemGroup>
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\Images\document.png" />
     <Content Include="DAL\DocumentProcessingModel.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>DocumentProcessingModel.edmx</DependentUpon>
@@ -291,6 +293,7 @@
       <DependentUpon>DocumentProcessingModel.edmx</DependentUpon>
     </Content>
     <Content Include="Scripts\Document\All.js" />
+    <Content Include="Scripts\Document\Resolution.js" />
     <Content Include="Scripts\Document\Index.js" />
     <Content Include="Scripts\Default\Index.js" />
     <Content Include="Scripts\Layout.js" />
@@ -333,13 +336,14 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\Documents\" />
-    <Folder Include="Content\Images\" />
     <Folder Include="Views\Application\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
     <Content Include="Views\Document\Index.cshtml" />
     <Content Include="Views\Document\All.cshtml" />
+    <Content Include="Views\Document\Resolutions.cshtml" />
+    <Content Include="Views\Document\Resolution.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />

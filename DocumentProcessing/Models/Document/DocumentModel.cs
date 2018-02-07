@@ -70,6 +70,7 @@ namespace DocumentProcessing.Models.Document
         public NomenclatureModel Nomenclature { get; set; }
         public List<NomenclatureModel> AllNomenclature { get; set; }
 
+        //public List<DocumentModel> AllDocuments { get; set; }
 
         public static DocumentModel Map(DAL.Document document)
         {

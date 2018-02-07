@@ -1,6 +1,6 @@
 ﻿@using Newtonsoft.Json
 @{
-    ViewBag.Title = "Документы";
+    ViewBag.Title = "Документы на рассмотрение";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <div id="documentsPage">
@@ -25,9 +25,8 @@
                 <md-table-head>Название</md-table-head>
                 <md-table-head>Тип</md-table-head>
                 <md-table-head>Создатель</md-table-head>
-                <md-table-head>Руководитель</md-table-head>
-                <md-table-head>Дата создания</md-table-head>
-                <md-table-head>Дата исполнения</md-table-head>
+                <md-table-head>Исполнитель</md-table-head>
+                <md-table-head>Контролер</md-table-head>
                 <md-table-head>Действия</md-table-head>
             </md-table-row>
 
@@ -35,13 +34,13 @@
                 <md-table-cell>{{ doc.DocIndex }}</md-table-cell>
                 <md-table-cell>{{ doc.Name }}</md-table-cell>
                 <md-table-cell>{{ doc.TypeModel.Name }}</md-table-cell>
-                <md-table-cell>{{doc.Creator.Firstname}} {{doc.Creator.Lastname}}</md-table-cell>
-                <md-table-cell>{{doc.Manager.Firstname}} {{doc.Manager.Lastname}}</md-table-cell>
-                <md-table-cell>{{doc.Created}}</md-table-cell>
-                <md-table-cell>{{ doc.ExecutionPeriod }}</md-table-cell>
+                <md-table-cell><span v-if="doc.Creator != null">{{doc.Creator.Firstname}} {{doc.Creator.Lastname}}</span> <span v-else>Не назначен</span></md-table-cell>
+                <md-table-cell><span v-if="doc.Executor != null">{{doc.Executor.Firstname}} {{doc.Executor.Lastname}}</span> <span class="md-accent" v-else><md-chip class="md-accent">Не назначен!</md-chip></span></md-table-cell>
+                <md-table-cell><span v-if="doc.Inspector != null">{{doc.Inspector.Firstname}} {{doc.Inspector.Lastname}}</span> <span v-else><md-chip class="md-accent">Не назначен!</md-chip></span></md-table-cell>
+                
                 <md-table-cell>
                     <md-card-actions>
-                        <md-button @@click="editing = !editing"><a :href="'/Document/Index/' + doc.Id">Просмотреть</a></md-button>
+                        <md-button @@click="editing = !editing"><a :href="'/Document/Resolution/' + doc.Id">Просмотреть</a></md-button>
                         <md-button>
                             <a :href="'/Document/DownloadDocument?id=' + doc.Id" target="_blank" class="button3">Скачать</a>
                         </md-button>

@@ -51,20 +51,22 @@ namespace DocumentProcessing.Service
 
             var possibleControllers = _userRepo.Get(u => u.Role == "Inspector")
                         ?.Select(UserModel.Map).ToList();
-            //if (document != null)
-            //{
-            //    if (document.ExecutorId == 0)
-            //    {
-            //        document.ExecutorId = userId;
-            //    }
-            //    if (document.ControllerId == 0)
-            //    {
-            //        document.ControllerId = userId;
-            //    }
-            //}
+       
            
             return document == null ? null : DocumentModel
                     .Map(document, allTypes, allNomenclature, possibleManagers, possibleExecutors, possibleControllers);
+        }
+        public DocumentsModel GetAllDocuments(int userId)
+        {
+
+            return DocumentsModel.Map(_documentsRepo.Get(doc => doc.CreatorId == userId)
+                ?.Select(doc => DocumentModel.Map(doc)).ToList());
+        }
+
+        public DocumentsModel GetAllDocuments()
+        {
+            return DocumentsModel.Map(_documentsRepo.Get(doc => doc.CreatorId >= 0)
+                ?.Select(doc => DocumentModel.Map(doc)).ToList());
         }
 
         public List<DocumentModel> GetDocumentsByCreator(int userId)
@@ -73,10 +75,10 @@ namespace DocumentProcessing.Service
                 ?.Select(doc => DocumentModel.Map(doc)).ToList();
         }
 
-        public List<DocumentModel> GetDocumentsByManager(int userId)
+        public DocumentsModel GetDocumentsByManager(int userId)
         {
-            return _documentsRepo.Get(doc => doc.ManagerId == userId)
-                ?.Select(doc => DocumentModel.Map(doc)).ToList();
+            return DocumentsModel.Map(_documentsRepo.Get(doc => doc.ManagerId == userId)
+                ?.Select(doc => DocumentModel.Map(doc)).ToList());
         }
 
         public List<DocumentModel> GetDocumentsByExecutor(int userId)
@@ -94,13 +96,14 @@ namespace DocumentProcessing.Service
         public void UpdateDocument(DocumentModel model)
         {
             Document document = _documentsRepo.GetById(model.Id);
-
+            
             FileHelper.DeleteFile(document.Path);
 
             document.Name = model.Name;
             document.Path = model.Path;
             document.TypeId = model.Type;
             document.DocHeader = model.DocHeader;
+            
             document.ManagerId = model.ManagerId;
             document.Resolution = model.Resolution;
             document.ExecutorId = model.ExecutorId;
@@ -147,6 +150,13 @@ namespace DocumentProcessing.Service
 
             _documentsRepo.Insert(ref document);
             model.Id = document.Id;
+
+            var nomenclature = _nomenclatureRepo.GetById(model.NomenclatureId);
+            document.DocIndex = nomenclature.IndexOfCase + "/" + model.Id +
+                          " от " + model.Created;
+
+            _documentsRepo.Update(document);
+            _documentsRepo.Save();
 
             return model;
         }

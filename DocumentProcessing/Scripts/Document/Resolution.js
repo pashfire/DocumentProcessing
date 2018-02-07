@@ -1,5 +1,5 @@
 ﻿"use strict";
-var documentPageVueInstance;
+var resolutionPageVueInstance;
 
 
 document.addEventListener("DOMContentLoaded", function (event) {
@@ -7,21 +7,21 @@ document.addEventListener("DOMContentLoaded", function (event) {
         template: VuelidateErrorExtractor.templates.foundation6
     });
 
-    documentPageVueInstance = new Vue({
-        el: '#documentPage',
+    resolutionPageVueInstance = new Vue({
+        el: '#resolutionPage',
         data: () => ({
             
-            form: {                
+            form: {
                 Id: null,
                 Name: null,
                 Path: null,
                 CreatorId: null,
-                RegistrationDate: new Date(),
-                Created: new Date(),
+                RegistrationDate: null,
+                Created: null,
                 Creator: null,
                 Type: null,
                 AllTypes: null,
-                ExecutionPeriod: new Date(),
+                ExecutionPeriod: null,
                 NomenclatureId: null,
                 DocIndex: null,
                 DocHeader: null,
@@ -33,7 +33,10 @@ document.addEventListener("DOMContentLoaded", function (event) {
                 ControllerNote: null,
                 DocumentFile: null,
                 Managers: null,
-                AllNomenclature: null
+                AllNomenclature: null,
+                
+                Executors: null,
+                Inspectors: null
                 
             },
             editing: true,
@@ -59,33 +62,17 @@ document.addEventListener("DOMContentLoaded", function (event) {
         mounted: function () {
             this.editing = !window.model.IsDocumentExists;
             this.form = window.model.DocumentModel;
-            this.form.DocumentFile = null;
         },
 
         validations: {
             form: {
-                Name: {
+                Resolution: {
                     required: validators.required,
-                    minLength: validators.minLength(5)
                 },
-                Created: {
+                ExecutorId: {
                     required: validators.required
                 },
-                ExecutionPeriod: {
-                    required: validators.required
-                },
-                NomenclatureId: {
-                    required: validators.required
-                },
-                Type: {
-                    required: validators.required,
-                    between: validators.between(1, 99999999)
-                },
-                ManagerId: {
-                    required: validators.required,
-                    between: validators.between(1, 99999999)
-                },
-                DocumentFile: {
+                ControllerId: {
                     required: validators.required
                 }
             }
@@ -116,20 +103,25 @@ document.addEventListener("DOMContentLoaded", function (event) {
                 var _this = this;
                 var regDate = new Date();
                 var formData = new FormData(document.getElementById('documentForm'));
-
                 formData.append("Id", this.form.Id);
                 formData.append("Name", this.form.Name);
-                formData.append("Path", this.form.DocumentFile);                  
+                formData.append("DocIndex", this.form.DocIndex);
+                formData.append("Path", this.form.Path);
                 formData.append("CreatorId", this.form.CreatorId);
                 formData.append("Created", this.form.Created);
                 formData.append("Type", this.form.Type);
                 formData.append("ExecutionPeriod", this.form.ExecutionPeriod);
-                formData.append("RegistrationDate", regDate.toLocaleDateString());
+                formData.append("RegistrationDate", this.form.RegistrationDate);
                 formData.append("ManagerId", this.form.ManagerId);
                 formData.append("NomenclatureId", this.form.NomenclatureId);
                 formData.append("DocHeader", this.form.DocHeader);
 
-                Vue.http.post('/Document/Index', formData)
+                formData.append("Resolution", this.form.Resolution);
+
+                formData.append("ExecutorId", this.form.ExecutorId);
+                formData.append("ControllerId", this.form.ControllerId);
+
+                Vue.http.post('/Document/Resolution', formData)
                     .then(response => {
                         //success callback
                         _this.documentCreated = true;

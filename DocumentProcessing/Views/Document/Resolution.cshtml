@@ -1,96 +1,46 @@
 ﻿@using Newtonsoft.Json
 @{
-    ViewBag.Title = "Документ";
+    ViewBag.Title = "Документ на резолюции";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<div id="documentPage">
+<div id="resolutionPage">
     <div v-if="editing" class="container">
         <form id="documentForm" novalidate class="md-layout-row md-gutter" @@submit.prevent="validateDocument">
             @Html.AntiForgeryToken()
             <md-card class="md-flex-50 md-flex-small-100">
                 <md-card-header>
-                    <div class="md-title">Создание документа</div>
+                    <div class="md-title">Составление резолюции</div>
                 </md-card-header>
                 <md-card-content>
                     <div class="md-layout-row md-layout-wrap md-gutter">
                         <div class="md-flex md-flex-small-100">
-                            <md-field :class="getValidationClass('Name')">
-                                <label for="name">Название</label>
-                                <md-input name="name" id="name" autocomplete="document-name" v-model="form.Name" :disabled="sending" />
-                                <span class="md-error" v-if="!$v.form.Name.required">The first name is required</span>
+                            <md-field :class="getValidationClass('Resolution')">
+                                <label for="resolution">Резолюция</label>
+                                <md-input name="resolution" id="resolution" autocomplete="document-resolution" v-model="form.Resolution" :disabled="sending" />
+                                <span class="md-error" v-if="!$v.form.Resolution.required">The resolution is required</span>
                                 <span class="md-error" v-else-if"!$v.form.Name.minlength">Неверное имя</span>
                             </md-field>
                         </div>
+                        
                         <div class="md-flex md-flex-small-100">
-                            <md-field :class="getValidationClass('Type')">
-                                <label for="typeId">Тип документа</label>
-                                <md-select name="typeId" id="typeId" v-model="form.Type" md-dense :disabled="sending">
-                                    <md-option v-for="type in form.AllTypes" :key="type.Name" :value="type.Id">{{type.Name}}</md-option>
+                            <md-field :class="getValidationClass('ExecutorId')">
+                                <label for="executorId">Исполнитель</label>
+                                <md-select name="executorId" id="executorId" v-model="form.ExecutorId" md-dense :disabled="sending">
+                                    <md-option v-for="user in form.Executors" :key="user.Id" :value="user.Id">{{user.Firstname}} {{user.Lastname}}</md-option>
                                 </md-select>
-                                <span class="md-error" v-if="!$v.form.Type.required">Нужно выбрать тип документа</span>
+                                <span class="md-error" v-if="!$v.form.ExecutorId.required">Нужно выбрать кому отправить документ.</span>
                             </md-field>
                         </div>
 
                         <div class="md-flex md-flex-small-100">
-
-                            <md-icon>event</md-icon>
-                            <label>Дата создания</label>
-                            <md-field :class="getValidationClass('Created')">
-                                <md-input type="date" v-model="form.Created"></md-input>
-                            </md-field>
-                            <p>Дата создания: {{form.Created}}</p>
-                        </div>
-
-                        <div class="md-flex md-flex-small-100">
-                            <md-icon>event</md-icon>
-                            <label>Период исполнения</label>
-                            <md-field name="dateField" :class="getValidationClass('ExecutionPeriod')">
-                                <md-input type="date" v-model="form.ExecutionPeriod"></md-input>
-                            </md-field>
-                            <p>Период исполнения: {{form.ExecutionPeriod}}</p>
-                        </div>
-
-                        <div class="md-flex md-flex-small-100">
-                            <md-field :class="getValidationClass('NomenclatureId')">
-                                <label for="typeId">Номенклатура дел</label>
-                                <md-select name="nomenclatureId" id="nomenclatureId" v-model="form.NomenclatureId" md-dense :disabled="sending">
-                                    <md-option v-for="nomenclature in form.AllNomenclature" :key="nomenclature.Id" :value="nomenclature.Id">{{nomenclature.IndexOfCase + " " + nomenclature.Headline + " " + nomenclature.SectionName}}</md-option>
+                            <md-field :class="getValidationClass('ControllerId')">
+                                <label for="controllerId">Контролер</label>
+                                <md-select name="controllerId" id="controllerId" v-model="form.ControllerId" md-dense :disabled="sending">
+                                    <md-option v-for="user in form.Inspectors" :key="user.Id" :value="user.Id">{{user.Firstname}} {{user.Lastname}}</md-option>
                                 </md-select>
-                                <span class="md-error" v-if="!$v.form.Type.required">Нужно выбрать тип документа</span>
+                                <span class="md-error" v-if="!$v.form.ExecutorId.required">Нужно выбрать кому отправить документ.</span>
                             </md-field>
                         </div>
-
-
-
-                        <md-field>
-                            <label for="docHeader">Заголовок (краткое описание)</label>
-                            <md-input name="docHeader" id="docHeader" autocomplete="document-docHeader" v-model="form.DocHeader" :disabled="sending" />
-                            
-                        </md-field>
-
-
-
-
-
-
-                        <div class="md-flex md-flex-small-100">
-                            <md-field :class="getValidationClass('ManagerId')">
-                                <label for="managerId">Руководитель</label>
-                                <md-select name="managerId" id="managerId" v-model="form.ManagerId" md-dense :disabled="sending">
-                                    <md-option v-for="user in form.Managers" :key="user.Id" :value="user.Id">{{user.Firstname}} {{user.Lastname}}</md-option>
-                                </md-select>
-                                <span class="md-error" v-if="!$v.form.ManagerId.required">Нужно выбрать кому отправить документ.</span>
-                            </md-field>
-                        </div>
-
-                        <div class="md-flex md-flex-small-100">
-                            <md-field :class="getValidationClass('DocumentFile')">
-                                <label>Документ</label>
-                                <md-file name="DocumentFile" id="DocumentFile" v-model="form.DocumentFile" md-dense :disabled="sending" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx" />
-                                <span class="md-error" v-if="!$v.form.DocumentFile.required">Нужно выбрать файл.</span>
-                            </md-field>
-                        </div>
-                        <p>DocumentFile: {{form.DocumentFile}}</p>
                     </div>
                         <md-button type="submit" class="md-primary" :disabled="sending">Добавить документ</md-button>
 </md-card-content>
@@ -127,9 +77,39 @@
                             <span>Руководитель: {{form.Manager.Firstname}} {{form.Manager.Lastname}}</span>
                             <span>Создан: {{form.Created}}</span>
                             <span>Необходимо исполнить: {{form.ExecutionPeriod}}</span>
-                            <span>Заголовок:{{form.DocHeader}}</span>
-                            <span>Резолюция:{{form.Resolution}}</span>
-                            <span>Отметка исполнителя:{{form.ExecutorNote}}</span>
+                            <span>Заголовок: <span v-if="form.DocHeader != null">{{form.DocHeader}}</span> <span v-else><md-chip class="md-accent">Нет заголовка</md-chip></span></span>
+                            <div v-if="form.Resolution != null">
+                                <md-content>
+                                    <span>Резолюция: {{form.Resolution}}</span>
+                                </md-content>
+                            </div>
+                            <div v-else>
+                                <md-content class="md-accent">
+                                    <span>Резолюция: Нет резолюции</span>
+                                </md-content>
+                            </div>
+
+                            <div v-if="form.ExecutorNote != null">
+                                <md-content>
+                                    <span>Отметка исполнителя: {{form.ExecutorNote}}</span>
+                                </md-content>
+                            </div>
+                            <div v-else>
+                                <md-content class="md-accent">
+                                    <span>Отметка исполнителя: Нет отметки сполнителя</span>
+                                </md-content>
+                            </div>
+
+                            <div v-if="form.ControllerNote != null">
+                                <md-content>
+                                    <span>Отметка контролера: {{form.ControllerNote}}</span>
+                                </md-content>
+                            </div>
+                            <div v-else>
+                                <md-content class="md-accent">
+                                    <span>Отметка контролера: Нет отметки контролера</span>
+                                </md-content>
+                            </div>
                         </div>
                     </md-list-item>
                 </md-list>
@@ -187,5 +167,5 @@
         var model = @Html.Raw(JsonConvert.SerializeObject(Model));
     </script>
     <script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>
-    <script src="~/Scripts/Document/Index.js" defer></script>
+    <script src="~/Scripts/Document/Resolution.js" defer></script>
 }
