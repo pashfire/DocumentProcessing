@@ -1,98 +1,53 @@
 ﻿@using Newtonsoft.Json
 @{
-    ViewBag.Title = "Документ";
+    ViewBag.Title = "Документ на резолюции";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<div id="documentPage">
+<div id="taskPage">
     <div v-if="editing" class="container">
         <form id="documentForm" novalidate class="md-layout-row md-gutter" @@submit.prevent="validateDocument">
             @Html.AntiForgeryToken()
             <md-card class="md-flex-50 md-flex-small-100">
                 <md-card-header>
-                    <div class="md-title">Создание документа</div>
+                    <div class="md-title">Описание выполнения задания по документу</div>
                 </md-card-header>
                 <md-card-content>
                     <div class="md-layout-row md-layout-wrap md-gutter">
                         <div class="md-flex md-flex-small-100">
-                            <md-field :class="getValidationClass('Name')">
-                                <label for="name">Название</label>
-                                <md-input name="name" id="name" autocomplete="document-name" v-model="form.Name" :disabled="sending" />
-                                <span class="md-error" v-if="!$v.form.Name.required">The first name is required</span>
-                                <span class="md-error" v-else-if"!$v.form.Name.minlength">Неверное имя</span>
+                            <md-field>
+                                <span >Название: {{form.Name}}</span>
                             </md-field>
-                        </div>
-                        <div class="md-flex md-flex-small-100">
-                            <md-field :class="getValidationClass('Type')">
-                                <label for="typeId">Тип документа</label>
-                                <md-select name="typeId" id="typeId" v-model="form.Type" md-dense :disabled="sending">
-                                    <md-option v-for="type in form.AllTypes" :key="type.Name" :value="type.Id">{{type.Name}}</md-option>
-                                </md-select>
-                                <span class="md-error" v-if="!$v.form.Type.required">Нужно выбрать тип документа</span>
-                            </md-field>
+                                
                         </div>
 
                         <div class="md-flex md-flex-small-100">
-
-                            <md-icon>event</md-icon>
-                            <label>Дата создания</label>
-                            <md-field :class="getValidationClass('Created')">
-                                <md-input type="date" v-model="form.Created"></md-input>
+                            <md-field>
+                                <span >Заголовок: {{form.DocHeader}}</span>
                             </md-field>
-                            <p>Дата создания: {{form.Created}}</p>
-                        </div>
-
-                        <div class="md-flex md-flex-small-100">
-                            <md-icon>event</md-icon>
-                            <label>Период исполнения</label>
-                            <md-field name="dateField" :class="getValidationClass('ExecutionPeriod')">
-                                <md-input type="date" v-model="form.ExecutionPeriod"></md-input>
-                            </md-field>
-                            <p>Период исполнения: {{form.ExecutionPeriod}}</p>
-                        </div>
-
-                        <div class="md-flex md-flex-small-100">
-                            <md-field :class="getValidationClass('NomenclatureId')">
-                                <label for="typeId">Номенклатура дел</label>
-                                <md-select name="nomenclatureId" id="nomenclatureId" v-model="form.NomenclatureId" md-dense :disabled="sending">
-                                    <md-option v-for="nomenclature in form.AllNomenclature" :key="nomenclature.Id" :value="nomenclature.Id">{{nomenclature.IndexOfCase + " " + nomenclature.Headline + " " + nomenclature.SectionName}}</md-option>
-                                </md-select>
-                                <span class="md-error" v-if="!$v.form.Type.required">Нужно выбрать тип документа</span>
-                            </md-field>
-                        </div>
-
-
-
-                        <md-field>
-                            <label for="docHeader">Заголовок (краткое описание)</label>
-                            <md-input name="docHeader" id="docHeader" autocomplete="document-docHeader" v-model="form.DocHeader" :disabled="sending" />
                             
-                        </md-field>
-
-
-
-
-
+                        </div>
 
                         <div class="md-flex md-flex-small-100">
-                            <md-field :class="getValidationClass('ManagerId')">
-                                <label for="managerId">Руководитель</label>
-                                <md-select name="managerId" id="managerId" v-model="form.ManagerId" md-dense :disabled="sending">
-                                    <md-option v-for="user in form.Managers" :key="user.Id" :value="user.Id">{{user.Firstname}} {{user.Lastname}}</md-option>
-                                </md-select>
-                                <span class="md-error" v-if="!$v.form.ManagerId.required">Нужно выбрать кому отправить документ.</span>
+                            <md-field>
+                                <span  v-if="form.Resolution != null">Резолюция: {{form.Resolution}}</span> <span class="md-headline" v-else>Резолюция: <md-chip class="md-accent">Отсутствует!</md-chip></span>
+                            </md-field>
+                            
+                        </div>
+
+                        <div class="md-flex md-flex-small-100">
+                            <md-field>
+                                <label for="executorNote">Отметка об исполнении</label>
+                                <md-input name="executorNote" id="executorNote" autocomplete="document-executorNote" v-model="form.ExecutorNote" :disabled="sending" />
+
                             </md-field>
                         </div>
 
                         <div class="md-flex md-flex-small-100">
-                            <md-field :class="getValidationClass('DocumentFile')">
-                                <label>Документ</label>
-                                <md-file name="DocumentFile" id="DocumentFile" v-model="form.DocumentFile" md-dense :disabled="sending" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx" />
-                                <span class="md-error" v-if="!$v.form.DocumentFile.required">Нужно выбрать файл.</span>
-                            </md-field>
+                            <span class="md-headline" v-if="form.Inspector != null">Контролер: {{form.Inspector.Firstname}} {{form.Inspector.Lastname}}</span> <span class="md-headline" v-else>Контролер: <md-chip class="md-accent">Не назначен!</md-chip></span>
+
                         </div>
-                        <p>DocumentFile: {{form.DocumentFile}}</p>
                     </div>
-                        <md-button type="submit" class="md-primary" :disabled="sending">Добавить документ</md-button>
+                        <md-button type="submit" class="md-primary" :disabled="sending">Обновить документ</md-button>
 </md-card-content>
                 <md-progress-bar md-mode="indeterminate" v-if="sending" />
             </md-card>
@@ -217,5 +172,5 @@
         var model = @Html.Raw(JsonConvert.SerializeObject(Model));
     </script>
     <script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>
-    <script src="~/Scripts/Document/Index.js" defer></script>
+    <script src="~/Scripts/Document/Task.js" defer></script>
 }

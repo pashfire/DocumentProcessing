@@ -293,6 +293,8 @@
       <DependentUpon>DocumentProcessingModel.edmx</DependentUpon>
     </Content>
     <Content Include="Scripts\Document\All.js" />
+    <Content Include="Scripts\Document\Inspect.js" />
+    <Content Include="Scripts\Document\Task.js" />
     <Content Include="Scripts\Document\Resolution.js" />
     <Content Include="Scripts\Document\Index.js" />
     <Content Include="Scripts\Default\Index.js" />
@@ -344,6 +346,10 @@
     <Content Include="Views\Document\All.cshtml" />
     <Content Include="Views\Document\Resolutions.cshtml" />
     <Content Include="Views\Document\Resolution.cshtml" />
+    <Content Include="Views\Document\Tasks.cshtml" />
+    <Content Include="Views\Document\Task.cshtml" />
+    <Content Include="Views\Document\Inspections.cshtml" />
+    <Content Include="Views\Document\Inspect.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />

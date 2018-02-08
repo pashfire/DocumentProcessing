@@ -187,5 +187,145 @@ namespace DocumentProcessing.Controllers
 
             return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
         }
+
+        //for executors
+        [HttpGet]
+        [Authorize(Roles = "Admin, Executor")]
+        public ActionResult Tasks()
+        {
+            if (CurrentUser.Role == "Executor")
+            {
+                DocumentViewModel model = new DocumentViewModel()
+                {
+                    AllDocumentsModel = documentService.GetDocumentsByExecutor(CurrentUser.Id),
+                    IsDocumentExists = true
+                };
+
+                return View(model);
+            }
+            else if (CurrentUser.Role == "Admin")
+            {
+                DocumentViewModel model = new DocumentViewModel()
+                {
+
+                    AllDocumentsModel = documentService.GetAllDocuments(),
+                    //DocumentModel = documentService.GetDocument(id),
+                    IsDocumentExists = true
+                };
+                if (model.AllDocumentsModel == null)
+                {
+                    model.IsDocumentExists = false;
+                    model.DocumentModel = documentService.CreateDocumentModel(this.CurrentUser);
+                }
+
+                return View(model);
+            }
+            return null;
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin, Executor")]
+        public ActionResult Task(DocumentModel model)
+        {
+            if (ModelState.IsValid)
+            {
+
+                if (model.Id == 0)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
+                else
+                {
+                    documentService.UpdateDocument(model);
+                }
+
+                return new HttpStatusCodeResult(HttpStatusCode.OK);
+            }
+
+            return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Admin, Executor")]
+        public ActionResult Task(int id = 0)
+        {
+            DocumentViewModel model = new DocumentViewModel()
+            {
+                DocumentModel = documentService.GetDocument(id, this.CurrentUser.Id),
+                IsDocumentExists = true
+            };
+
+            return View(model);
+        }
+
+        //for inspectors
+        [HttpGet]
+        [Authorize(Roles = "Admin, Inspector")]
+        public ActionResult Inspections()
+        {
+            if (CurrentUser.Role == "Inspector")
+            {
+                DocumentViewModel model = new DocumentViewModel()
+                {
+                    AllDocumentsModel = documentService.GetDocumentsByController(CurrentUser.Id),
+                    IsDocumentExists = true
+                };
+
+                return View(model);
+            }
+            else if (CurrentUser.Role == "Admin")
+            {
+                DocumentViewModel model = new DocumentViewModel()
+                {
+
+                    AllDocumentsModel = documentService.GetAllDocuments(),
+                    //DocumentModel = documentService.GetDocument(id),
+                    IsDocumentExists = true
+                };
+                if (model.AllDocumentsModel == null)
+                {
+                    model.IsDocumentExists = false;
+                    model.DocumentModel = documentService.CreateDocumentModel(this.CurrentUser);
+                }
+
+                return View(model);
+            }
+            return null;
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Admin, Inspector")]
+        public ActionResult Inspect(int id = 0)
+        {
+            DocumentViewModel model = new DocumentViewModel()
+            {
+                DocumentModel = documentService.GetDocument(id, this.CurrentUser.Id),
+                IsDocumentExists = true
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin, Inspector")]
+        public ActionResult Inspect(DocumentModel model)
+        {
+            if (ModelState.IsValid)
+            {
+
+                if (model.Id == 0)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
+                else
+                {
+                    documentService.UpdateDocument(model);
+                }
+
+                return new HttpStatusCodeResult(HttpStatusCode.OK);
+            }
+
+            return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+        }
     }
 }

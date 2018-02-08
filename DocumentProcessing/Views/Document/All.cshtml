@@ -41,9 +41,15 @@
                 <md-table-cell>{{ doc.ExecutionPeriod }}</md-table-cell>
                 <md-table-cell>
                     <md-card-actions>
-                        <md-button @@click="editing = !editing"><a :href="'/Document/Index/' + doc.Id">Просмотреть</a></md-button>
+                        <md-button @@click="editing = !editing">
+                            <a :href="'/Document/Index/' + doc.Id">
+                                <i class="material-icons">pageview</i>
+                            </a>
+                            <md-tooltip md-direction="top">Просмотреть документ</md-tooltip>
+                        </md-button>
                         <md-button>
-                            <a :href="'/Document/DownloadDocument?id=' + doc.Id" target="_blank" class="button3">Скачать</a>
+                            <a :href="'/Document/DownloadDocument?id=' + doc.Id" target="_blank" class="button3"><i class="material-icons">file_download</i></a>
+                            <md-tooltip md-direction="top">Скачать документ</md-tooltip>
                         </md-button>
                     </md-card-actions>
                 </md-table-cell>

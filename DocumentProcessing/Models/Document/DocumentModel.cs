@@ -103,7 +103,7 @@ namespace DocumentProcessing.Models.Document
 
         public static DocumentModel Map(DAL.Document document,
             List<DocumentTypeModel> allTypes, List<NomenclatureModel> allNomenclature,
-            List<UserModel> managers, List<UserModel> inspectors, List<UserModel> executors)
+            List<UserModel> managers,  List<UserModel> executors, List<UserModel> inspectors)
         {
             DocumentModel model = DocumentModel.Map(document);
 

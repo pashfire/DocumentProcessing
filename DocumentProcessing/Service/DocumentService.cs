@@ -81,16 +81,16 @@ namespace DocumentProcessing.Service
                 ?.Select(doc => DocumentModel.Map(doc)).ToList());
         }
 
-        public List<DocumentModel> GetDocumentsByExecutor(int userId)
+        public DocumentsModel GetDocumentsByExecutor(int userId)
         {
-            return _documentsRepo.Get(doc => doc.ExecutorId == userId)
-                ?.Select(doc => DocumentModel.Map(doc)).ToList();
+            return DocumentsModel.Map(_documentsRepo.Get(doc => doc.ExecutorId == userId)
+                ?.Select(doc => DocumentModel.Map(doc)).ToList());
         }
 
-        public List<DocumentModel> GetDocumentsByController(int userId)
+        public DocumentsModel GetDocumentsByController(int userId)
         {
-            return _documentsRepo.Get(doc => doc.ControllerId == userId)
-                ?.Select(doc => DocumentModel.Map(doc)).ToList();
+            return DocumentsModel.Map(_documentsRepo.Get(doc => doc.ControllerId == userId)
+                ?.Select(doc => DocumentModel.Map(doc)).ToList());
         }
 
         public void UpdateDocument(DocumentModel model)

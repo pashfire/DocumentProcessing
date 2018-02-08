@@ -1,6 +1,6 @@
 ﻿@using Newtonsoft.Json
 @{
-    ViewBag.Title = "Документы на рассмотрение";
+    ViewBag.Title = "Документы на исполнение";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <div id="documentsPage">
@@ -17,50 +17,36 @@
             else
             {
                 <md-table-toolbar>
-                    <h1 class="md-title">Мои документы</h1>
+                    <h1 class="md-title">Мои задания</h1>
                 </md-table-toolbar>
             }
                 <md-table-row>
                     <md-table-head>Статус</md-table-head>
                     <md-table-head md-numeric>Индекс</md-table-head>
                     <md-table-head>Название</md-table-head>
-
-                    <md-table-head>Создатель</md-table-head>
+                    <md-table-head>Руководитель</md-table-head>
                     <md-table-head>Резолюция</md-table-head>
-                    <md-table-head>Исполнитель</md-table-head>
+                    <md-table-head>Отметка об исполнении</md-table-head>
                     <md-table-head>Контролер</md-table-head>
                     <md-table-head>Действия</md-table-head>
                 </md-table-row>
 
                 <md-table-row v-for="doc in docs.AllDocuments" :key="doc.Id">
-                    <md-table-cell><span v-if="(doc.Executor != null) && (doc.Inspector != null)"><md-avatar class="md-avatar-icon md-primary md-small"><i class="material-icons md-small">done</i></md-avatar></span><span v-else><md-avatar class="md-avatar-icon md-accent md-small"><i class="material-icons md-small">report</i></md-avatar></span></md-table-cell>
+                    <md-table-cell><span v-if="(doc.Resolution != null) && (doc.ExecutorNote != null) && (doc.Inspector != null)"><md-avatar class="md-avatar-icon md-primary md-small"><i class="material-icons md-small">done</i></md-avatar></span><span v-else><md-avatar class="md-avatar-icon md-accent md-small"><i class="material-icons md-small">report</i></md-avatar></span></md-table-cell>
                     <md-table-cell>{{ doc.DocIndex }}</md-table-cell>
                     <md-table-cell>{{ doc.Name }}</md-table-cell>
-
-                    <md-table-cell><span v-if="doc.Creator != null">{{doc.Creator.Firstname}} {{doc.Creator.Lastname}}</span> <span v-else>Не назначен</span></md-table-cell>
+                    <md-table-cell><span v-if="doc.Manager != null">{{doc.Manager.Firstname}} {{doc.Manager.Lastname}}</span> <span v-else>Не назначен</span></md-table-cell>
                     <md-table-cell><span v-if="doc.Resolution != null">{{doc.Resolution}}</span> <span v-else><md-chip class="md-accent md-small">Резолюция отсутствует!</md-chip></span></md-table-cell>
-
-                    <md-table-cell><span v-if="doc.Executor != null">{{doc.Executor.Firstname}} {{doc.Executor.Lastname}}</span> <span class="md-accent" v-else><md-chip class="md-accent">Не назначен!</md-chip></span></md-table-cell>
-                    <md-table-cell><span v-if="doc.Inspector != null">{{doc.Inspector.Firstname}} {{doc.Inspector.Lastname}}</span> <span v-else><md-chip class="md-accent">Не назначен!</md-chip></span></md-table-cell>
+                    <md-table-cell><span v-if="doc.ExecutorNote != null">{{doc.ExecutorNote}}</span> <span v-else><md-chip class="md-accent md-small">Отметка отсутствует!</md-chip></span></md-table-cell>
+                    <md-table-cell><span v-if="doc.Inspector != null">{{doc.Inspector.Firstname}} {{doc.Inspector.Lastname}}</span> <span v-else><md-chip class="md-accent md-small">Контролер не назначен!</md-chip></span></md-table-cell>
 
                     <md-table-cell>
-                        
-                            <p>
-                                <md-button @@click="editing = !editing">
-                                    <a :href="'/Document/Resolution/' + doc.Id">
-                                        <i class="material-icons">pageview</i>
-                                    </a>
-                                    <md-tooltip md-direction="top">Просмотреть документ</md-tooltip>
-                                </md-button>
-                            </p>
-                            <p>
-                                <md-button>
-                                    <a :href="'/Document/DownloadDocument?id=' + doc.Id" target="_blank" class="button3"><i class="material-icons">file_download</i></a>
-                                    <md-tooltip md-direction="top">Скачать документ</md-tooltip>
-                                </md-button>
-                            </p>
-                            
-                        
+                        <md-card-actions>
+                            <md-button @@click="editing = !editing"><a :href="'/Document/Task/' + doc.Id"><i class="material-icons">pageview</i></a></md-button>
+                            <md-button>
+                                <a :href="'/Document/DownloadDocument?id=' + doc.Id" target="_blank" class="button3"><i class="material-icons">file_download</i></a>
+                            </md-button>
+                        </md-card-actions>
                     </md-table-cell>
                 </md-table-row>
 

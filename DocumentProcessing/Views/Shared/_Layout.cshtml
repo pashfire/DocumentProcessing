@@ -76,23 +76,55 @@ else if (User.IsInRole("Clerk"))
 
                 </md-list-item>
             </md-list>
-            }
-            else if (User.IsInRole("Manager"))
-            {
-                        <md-list>
-                            <md-list-item>
-                                <md-icon>home</md-icon>
-                                <span class="md-list-item-text">@Html.ActionLink("Главная", "Index", "Default", routeValues: null, htmlAttributes: new { title = "Главная" })</span>
+}
+else if (User.IsInRole("Manager"))
+{
+            <md-list>
+                <md-list-item>
+                    <md-icon>home</md-icon>
+                    <span class="md-list-item-text">@Html.ActionLink("Главная", "Index", "Default", routeValues: null, htmlAttributes: new { title = "Главная" })</span>
 
-                            </md-list-item>
+                </md-list-item>
 
-                            <md-list-item>
-                                <md-icon>work</md-icon>
-                                <span class="md-list-item-text">@Html.ActionLink("Мои документы", "Resolutions", "Document", routeValues: null, htmlAttributes: new { title = "Документы" })</span>
-                            </md-list-item>
+                <md-list-item>
+                    <md-icon>work</md-icon>
+                    <span class="md-list-item-text">@Html.ActionLink("Мои документы", "Resolutions", "Document", routeValues: null, htmlAttributes: new { title = "Документы" })</span>
+                </md-list-item>
 
-                        </md-list>
-            }
+            </md-list>
+}
+else if (User.IsInRole("Executor"))
+{
+            <md-list>
+                <md-list-item>
+                    <md-icon>home</md-icon>
+                    <span class="md-list-item-text">@Html.ActionLink("Главная", "Index", "Default", routeValues: null, htmlAttributes: new { title = "Главная" })</span>
+
+                </md-list-item>
+
+                <md-list-item>
+                    <md-icon>work</md-icon>
+                    <span class="md-list-item-text">@Html.ActionLink("Мои задания", "Tasks", "Document", routeValues: null, htmlAttributes: new { title = "Документы" })</span>
+                </md-list-item>
+
+            </md-list>
+}
+else if (User.IsInRole("Inspector"))
+{
+            <md-list>
+                <md-list-item>
+                    <md-icon>home</md-icon>
+                    <span class="md-list-item-text">@Html.ActionLink("Главная", "Index", "Default", routeValues: null, htmlAttributes: new { title = "Главная" })</span>
+
+                </md-list-item>
+
+                <md-list-item>
+                    <md-icon>work</md-icon>
+                    <span class="md-list-item-text">@Html.ActionLink("Мои документы", "Inspections", "Document", routeValues: null, htmlAttributes: new { title = "Документы" })</span>
+                </md-list-item>
+
+            </md-list>
+}
             </md-drawer>
         </div>
     </div>
