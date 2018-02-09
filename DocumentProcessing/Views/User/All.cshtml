@@ -1,0 +1,91 @@
+﻿@using Newtonsoft.Json
+@{
+    ViewBag.Title = "Пользователи";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div id="usersPage">
+
+    <div class="md-flex md-flex-small-100">
+        <md-table md-card>
+            @using Microsoft.AspNet.Identity
+            @if (User.IsInRole("Admin"))
+    {
+        <md-table-toolbar>
+            <h1 class="md-title">Все пользователи</h1>
+        </md-table-toolbar>
+}
+
+        <md-table-row>
+            <md-table-head>Email</md-table-head>
+            <md-table-head>Имя пользователя</md-table-head>
+            <md-table-head>Роль в системе</md-table-head>
+            <md-table-head>Действия</md-table-head>
+        </md-table-row>
+
+            <md-table-row v-for="user in users.AllUsers" :key="user.Id">
+                <md-table-cell>{{ user.Email }}</md-table-cell>
+                <md-table-cell>{{ user.Firstname }} {{ user.Lastname }}</md-table-cell>
+                <md-table-cell>{{ user.RoleName }}</md-table-cell>
+                <md-table-cell>
+                    <a href=""><i class="material-icons">person_outline</i><md-tooltip md-direction="top">Просмотреть аккаунт</md-tooltip><span>   </span></a>
+                    
+                    <a href="" class="button3 md-accent"><i class="material-icons">delete_forever</i><md-tooltip md-direction="top">Удалить аккаунт</md-tooltip></a>
+                </md-table-cell>
+            </md-table-row>
+
+
+            
+
+
+        </md-table>
+    </div>
+
+    
+
+
+
+</div>
+<style lang="scss" scoped>
+    .md-card {
+        width: auto;
+        margin: 20px;
+        display: contents;
+        vertical-align: central;
+    }
+
+    .md-menu-content {
+        box-shadow: 0 5px 5px -3px rgba(0,0,0,.2), 0 8px 10px 1px rgba(0,0,0,.14), 0 3px 14px 2px rgba(0,0,0,.12);
+        min-width: 350px;
+        max-width: 500px;
+        max-height: 35vh;
+        vertical-align: central;
+        display: compact;
+        display: flex;
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+        flex-direction: column;
+        position: absolute;
+        z-index: 8;
+        border-radius: 2px;
+        transition: opacity .3s cubic-bezier(.25,.8,.25,1),-webkit-transform .2s cubic-bezier(.25,.8,.25,1);
+        transition: transform .2s cubic-bezier(.25,.8,.25,1),opacity .3s cubic-bezier(.25,.8,.25,1);
+        transition: transform .2s cubic-bezier(.25,.8,.25,1),opacity .3s cubic-bezier(.25,.8,.25,1),-webkit-transform .2s cubic-bezier(.25,.8,.25,1);
+        will-change: opacity,transform,top,left !important;
+    }
+    .md-input[type=date] {
+        max-width: 150px;
+        text-align: left;
+        
+    }
+    .md-field {
+        left: 0px;
+        text-align: left;
+    }
+</style>
+@section scripts{
+    <script>
+        var model = @Html.Raw(JsonConvert.SerializeObject(Model));
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>
+    <script src="~/Scripts/User/All.js" defer></script>
+}

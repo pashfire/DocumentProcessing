@@ -4,11 +4,11 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="4e45c30cc4f84693bff0d88a81cfcb28" Name="Diagram1" ZoomLevel="90">
-        <EntityTypeShape EntityType="DocumentProcessingModel.AspNetRole" Width="1.5" PointX="0.75" PointY="4.125" IsExpanded="true" />
-        <EntityTypeShape EntityType="DocumentProcessingModel.AspNetUserClaim" Width="1.5" PointX="5.25" PointY="1.25" IsExpanded="true" />
-        <EntityTypeShape EntityType="DocumentProcessingModel.AspNetUserLogin" Width="1.5" PointX="5.25" PointY="3.875" IsExpanded="true" />
-        <EntityTypeShape EntityType="DocumentProcessingModel.AspNetUser" Width="1.5" PointX="3" PointY="2.875" IsExpanded="true" />
+      <Diagram DiagramId="4e45c30cc4f84693bff0d88a81cfcb28" Name="Diagram1" ZoomLevel="58">
+        <EntityTypeShape EntityType="DocumentProcessingModel.AspNetRole" Width="1.5" PointX="5.875" PointY="6" IsExpanded="true" />
+        <EntityTypeShape EntityType="DocumentProcessingModel.AspNetUserClaim" Width="1.5" PointX="4.875" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="DocumentProcessingModel.AspNetUserLogin" Width="1.5" PointX="7.625" PointY="6" IsExpanded="true" />
+        <EntityTypeShape EntityType="DocumentProcessingModel.AspNetUser" Width="1.5" PointX="6.625" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="DocumentProcessingModel.User" Width="1.5" PointX="8.5" PointY="2.75" IsExpanded="true" />
         <AssociationConnector Association="DocumentProcessingModel.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" ManuallyRouted="false" />
         <AssociationConnector Association="DocumentProcessingModel.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" ManuallyRouted="false" />
@@ -16,10 +16,10 @@
         <AssociationConnector Association="DocumentProcessingModel.AspNetUserRoles" ManuallyRouted="false" />
         <EntityTypeShape EntityType="DocumentProcessingModel.DocumentType" Width="1.5" PointX="8.5" PointY="0.75" />
         <EntityTypeShape EntityType="DocumentProcessingModel.AffairsNomenclature" Width="1.5" PointX="10.25" PointY="6.75" />
-        <EntityTypeShape EntityType="DocumentProcessingModel.UserRole" Width="1.5" PointX="1.875" PointY="7.75" />
+        <EntityTypeShape EntityType="DocumentProcessingModel.UserRole" Width="1.5" PointX="4.75" PointY="3.125" />
         <AssociationConnector Association="DocumentProcessingModel.FK_UserRoles_AspNetRoles" />
         <AssociationConnector Association="DocumentProcessingModel.FK_UserRoles_AspNetUsers" />
-        <EntityTypeShape EntityType="DocumentProcessingModel.Document" Width="1.5" PointX="12.5" PointY="2" />
+        <EntityTypeShape EntityType="DocumentProcessingModel.Document" Width="1.5" PointX="10.375" PointY="0.75" />
         <AssociationConnector Association="DocumentProcessingModel.FK_Documents_AffairsNomenclature" />
         <AssociationConnector Association="DocumentProcessingModel.FK_Documents_ToControoller" />
         <AssociationConnector Association="DocumentProcessingModel.FK_Documents_ToCreator" />

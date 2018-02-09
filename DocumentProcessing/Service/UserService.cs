@@ -1,6 +1,7 @@
 ﻿using DocumentProcessing.DAL;
 using DocumentProcessing.Infrastructure.Enums;
 using DocumentProcessing.Models;
+using DocumentProcessing.Models.Document;
 using DocumentProcessing.Models.User;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
@@ -21,6 +22,12 @@ namespace DocumentProcessing.Service
         {
             _userRepo = new GenericRepository<User>(dataContext);
             _roleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(dataContext));
+        }
+
+        public UsersModel GetAllUsers()
+        {
+            return UsersModel.Map(_userRepo.Get(u => u.Role != "Admin")
+                        ?.Select(UserModel.Map).ToList());
         }
 
         public User GetUser(int id)

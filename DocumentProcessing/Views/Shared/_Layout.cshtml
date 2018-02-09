@@ -35,25 +35,32 @@
                 @using Microsoft.AspNet.Identity
                 @if (User.IsInRole("Admin"))
     {
-            <md-list>
-                <md-list-item>
-                    <md-icon>home</md-icon>
-                    <span class="md-list-item-text">@Html.ActionLink("Главная", "Index", "Default", routeValues: null, htmlAttributes: new { title = "Главная" })</span>
+                <md-list>
+                    <md-list-item>
+                        <md-icon>home</md-icon>
+                        <span class="md-list-item-text">@Html.ActionLink("Главная", "Index", "Default", routeValues: null, htmlAttributes: new { title = "Главная" })</span>
 
-                </md-list-item>
+                    </md-list-item>
 
-                <md-list-item>
-                    <md-icon>work</md-icon>
-                    <span class="md-list-item-text">@Html.ActionLink("Все документы", "All", "Document", routeValues: null, htmlAttributes: new { title = "Документы" })</span>
+                    <md-list-item>
+                        <md-icon>work</md-icon>
+                        <span class="md-list-item-text">@Html.ActionLink("Все документы", "All", "Document", routeValues: null, htmlAttributes: new { title = "Документы" })</span>
 
-                </md-list-item>
+                    </md-list-item>
 
-                <md-list-item>
-                    <md-icon>note_add</md-icon>
-                    <span class="md-list-item-text">@Html.ActionLink("Новый документ", "Index", "Document", routeValues: null, htmlAttributes: new { title = "Новый документ" })</span>
+                    <md-list-item>
+                        <md-icon>note_add</md-icon>
+                        <span class="md-list-item-text">@Html.ActionLink("Новый документ", "Index", "Document", routeValues: null, htmlAttributes: new { title = "Новый документ" })</span>
 
-                </md-list-item>
-            </md-list>
+                    </md-list-item>
+
+                    <md-list-item>
+                        
+                        <md-icon>supervisor_account</md-icon>
+                        <span class="md-list-item-text">@Html.ActionLink("Пользователи", "All", "User", routeValues: null, htmlAttributes: new { title = "Новый документ" })</span>
+
+                    </md-list-item>
+                </md-list>
 }
 else if (User.IsInRole("Clerk"))
 {
